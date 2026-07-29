@@ -51,6 +51,19 @@
 	padding: 12px 16px;
 	border: 1px solid #222;
 	cursor: pointer;
+	transition:
+		background-color 150ms ease,
+		color 150ms ease;
+}
+
+.file-uploader:hover {
+	color: #fff;
+	background: #222;
+}
+
+.file-uploader:focus-within {
+	outline: 2px solid #222;
+	outline-offset: 3px;
 }
 
 .file-uploader input {
@@ -82,6 +95,17 @@
 	font-size: 14px;
 }
 
+.status-message,
+.error-message {
+	margin: 16px 0 0;
+	font-size: 13px;
+	line-height: 1.5;
+}
+
+.status-message {
+	color: #777;
+}
+
 .error-message {
 	color: #b42318;
 }
@@ -92,15 +116,22 @@
 	flex-direction: column;
 }
 
-.preview-header {
+.preview-header,
+.sampling-preview-header,
+.parametric-preview-header {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
+}
+
+.preview-header {
 	padding: 20px 24px;
 	border-bottom: 1px solid #d8d8d8;
 }
 
-.preview-header span {
+.preview-header span,
+.sampling-preview-header span,
+.parametric-preview-header span {
 	color: #777;
 	font-size: 12px;
 }
@@ -128,31 +159,27 @@
 }
 
 .canvas-placeholder {
+	margin: 0;
 	color: #888;
 	font-size: 14px;
 }
 
-.sampling-preview {
+.sampling-preview,
+.parametric-preview {
 	padding: 24px;
 	border-top: 1px solid #d8d8d8;
 	background: #fff;
 }
 
-.sampling-preview-header {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
+.sampling-preview-header,
+.parametric-preview-header {
 	margin-bottom: 16px;
 }
 
-.sampling-preview-header h2 {
+.sampling-preview-header h2,
+.parametric-preview-header h2 {
 	margin: 0;
 	font-size: 14px;
-}
-
-.sampling-preview-header span {
-	color: #777;
-	font-size: 12px;
 }
 
 .sampling-grid {
@@ -167,9 +194,29 @@
 	min-height: 0;
 }
 
+.parametric-canvas-container {
+	display: grid;
+	place-items: center;
+	overflow: auto;
+	padding: 32px;
+	background: #f3f3f3;
+}
+
+.parametric-canvas {
+	display: block;
+	max-width: 100%;
+	height: auto;
+	background: #f5f1e8;
+	box-shadow: 0 8px 28px rgb(0 0 0 / 8%);
+}
+
 @media (max-width: 800px) {
 	.app {
 		padding: 20px;
+	}
+
+	.app-header {
+		margin-bottom: 24px;
 	}
 
 	.workspace {
@@ -183,5 +230,15 @@
 
 	.canvas-container {
 		min-height: 420px;
+		padding: 20px;
+	}
+
+	.sampling-preview,
+	.parametric-preview {
+		padding: 20px;
+	}
+
+	.parametric-canvas-container {
+		padding: 20px;
 	}
 }
