@@ -1,122 +1,56 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useState } from "react";
+import "./App.css";
+import { FileUploader } from "./components/FileUploader/FileUploader";
+import { GeneratorCanvas } from "./components/GeneratorCanvas/GeneratorCanvas";
+import { useImageSource } from "./hooks/useImageSource";
 
 function App() {
-  const [count, setCount] = useState(0)
+	const [sourceFile, setSourceFile] = useState<File | null>(null);
+	const { image, error, isLoading } = useImageSource(sourceFile);
 
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+	return (
+		<main className="app">
+			<header className="app-header">
+				<p className="eyebrow">Core Experiment 01</p>
+				<h1>Parametric Mosaic Generator</h1>
+				<p>이미지 소스를 Canvas에 로드하고 렌더링하는 첫 번째 실험입니다.</p>
+			</header>
 
-      <div className="ticks"></div>
+			<section className="workspace">
+				<aside className="control-panel">
+					<h2>Source</h2>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+					<FileUploader onFileChange={setSourceFile} />
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+					{sourceFile && (
+						<dl className="file-information">
+							<div>
+								<dt>파일명</dt>
+								<dd>{sourceFile.name}</dd>
+							</div>
+
+							<div>
+								<dt>파일 형식</dt>
+								<dd>{sourceFile.type}</dd>
+							</div>
+						</dl>
+					)}
+
+					{isLoading && <p>이미지를 불러오는 중입니다.</p>}
+					{error && <p className="error-message">{error}</p>}
+				</aside>
+
+				<section className="preview-panel">
+					<div className="preview-header">
+						<h2>Preview</h2>
+						<span>Canvas 2D</span>
+					</div>
+
+					<GeneratorCanvas image={image} />
+				</section>
+			</section>
+		</main>
+	);
 }
 
-export default App
+export default App;
