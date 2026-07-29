@@ -8,6 +8,8 @@ import { SamplingPreview } from "./components/SamplingPreview/SamplingPreview";
 import type { GeneratorConfig } from "./generator/types/generator";
 import { useImageSource } from "./hooks/useImageSource";
 
+type PreviewMode = "original" | "luminance" | "parametric";
+
 const DEFAULT_CONFIG: GeneratorConfig = {
 	columns: 60,
 	rows: 40,
@@ -19,8 +21,35 @@ const DEFAULT_CONFIG: GeneratorConfig = {
 function App() {
 	const [sourceFile, setSourceFile] = useState<File | null>(null);
 	const [config, setConfig] = useState<GeneratorConfig>(DEFAULT_CONFIG);
+	const [previewMode, setPreviewMode] = useState<PreviewMode>("parametric");
 
 	const { image, error, isLoading } = useImageSource(sourceFile);
+
+	const renderPreview = () => {
+		if (!image) {
+			return (
+				<div className="empty-preview">
+					<p>이미지를 선택하면 결과가 표시됩니다.</p>
+				</div>
+			);
+		}
+
+		if (previewMode === "original") {
+			return <GeneratorCanvas image={image} />;
+		}
+
+		if (previewMode === "luminance") {
+			return (
+				<SamplingPreview
+					image={image}
+					columns={config.columns}
+					rows={config.rows}
+				/>
+			);
+		}
+
+		return <ParametricPreview image={image} config={config} />;
+	};
 
 	return (
 		<main className="app">
@@ -61,19 +90,61 @@ function App() {
 
 				<section className="preview-panel">
 					<div className="preview-header">
-						<h2>Preview</h2>
-						<span>Canvas 2D</span>
+						<div>
+							<h2>Preview</h2>
+							<span>Canvas 2D</span>
+						</div>
+
+						<div
+							className="preview-tabs"
+							role="tablist"
+							aria-label="Preview mode"
+						>
+							<button
+								type="button"
+								role="tab"
+								aria-selected={previewMode === "original"}
+								className={
+									previewMode === "original"
+										? "preview-tab is-active"
+										: "preview-tab"
+								}
+								onClick={() => setPreviewMode("original")}
+							>
+								Original
+							</button>
+
+							<button
+								type="button"
+								role="tab"
+								aria-selected={previewMode === "luminance"}
+								className={
+									previewMode === "luminance"
+										? "preview-tab is-active"
+										: "preview-tab"
+								}
+								onClick={() => setPreviewMode("luminance")}
+							>
+								Luminance
+							</button>
+
+							<button
+								type="button"
+								role="tab"
+								aria-selected={previewMode === "parametric"}
+								className={
+									previewMode === "parametric"
+										? "preview-tab is-active"
+										: "preview-tab"
+								}
+								onClick={() => setPreviewMode("parametric")}
+							>
+								Parametric
+							</button>
+						</div>
 					</div>
 
-					<GeneratorCanvas image={image} />
-
-					<SamplingPreview
-						image={image}
-						columns={config.columns}
-						rows={config.rows}
-					/>
-
-					<ParametricPreview image={image} config={config} />
+					<div className="preview-content">{renderPreview()}</div>
 				</section>
 			</section>
 		</main>
