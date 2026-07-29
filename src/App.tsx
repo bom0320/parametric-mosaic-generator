@@ -2,6 +2,7 @@ import { useState } from "react";
 import "./App.css";
 import { FileUploader } from "./components/FileUploader/FileUploader";
 import { GeneratorCanvas } from "./components/GeneratorCanvas/GeneratorCanvas";
+import { SamplingPreview } from "./components/SamplingPreview/SamplingPreview";
 import { useImageSource } from "./hooks/useImageSource";
 
 function App() {
@@ -47,6 +48,7 @@ function App() {
 					</div>
 
 					<GeneratorCanvas image={image} />
+					<SamplingPreview image={image} />
 				</section>
 			</section>
 		</main>

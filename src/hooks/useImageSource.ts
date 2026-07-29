@@ -22,6 +22,7 @@ export const useImageSource = (file: File | null): UseImageSourceReturn => {
 		if (!file.type.startsWith("image/")) {
 			setImage(null);
 			setError("이미지 파일만 업로드할 수 있습니다.");
+			setIsLoading(false);
 			return;
 		}
 
