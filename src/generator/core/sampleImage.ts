@@ -1,4 +1,6 @@
-import type { SampledCell } from "../types/generator";
+import type { RGBColor, SampledCell } from "../types/generator";
+import { calculateLuminance } from "./calculateLuminance";
+import { mapLuminanceToSegment } from "./mapLuminanceToSegment";
 
 type SampleImageOptions = {
 	columns: number;
@@ -36,15 +38,22 @@ export const sampleImage = (
 		for (let column = 0; column < columns; column += 1) {
 			const pixelIndex = (row * columns + column) * 4;
 
+			const color: RGBColor = {
+				red: imageData.data[pixelIndex] ?? 0,
+				green: imageData.data[pixelIndex + 1] ?? 0,
+				blue: imageData.data[pixelIndex + 2] ?? 0,
+				alpha: imageData.data[pixelIndex + 3] ?? 255,
+			};
+
+			const luminance = calculateLuminance(color);
+			const segment = mapLuminanceToSegment(luminance);
+
 			cells.push({
 				column,
 				row,
-				color: {
-					red: imageData.data[pixelIndex],
-					green: imageData.data[pixelIndex + 1],
-					blue: imageData.data[pixelIndex + 2],
-					alpha: imageData.data[pixelIndex + 3],
-				},
+				color,
+				luminance,
+				segment,
 			});
 		}
 	}

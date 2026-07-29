@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { sampleImage } from "../../generator/core/sampleImage";
+import { segmentColorMap } from "../../generator/core/segmentColorMap";
 
 type SamplingPreviewProps = {
 	image: HTMLImageElement | null;
@@ -30,7 +31,8 @@ export const SamplingPreview = ({
 	return (
 		<section className="sampling-preview">
 			<div className="sampling-preview-header">
-				<h2>Sampling Preview</h2>
+				<h2>Luminance Preview</h2>
+
 				<span>
 					{columns} × {rows} · {cells.length} cells
 				</span>
@@ -43,22 +45,16 @@ export const SamplingPreview = ({
 					aspectRatio: `${columns} / ${rows}`,
 				}}
 			>
-				{cells.map((cell) => {
-					const { red, green, blue, alpha } = cell.color;
-
-					return (
-						<div
-							key={`${cell.column}-${cell.row}`}
-							className="sampling-cell"
-							style={{
-								backgroundColor: `rgba(${red}, ${green}, ${blue}, ${
-									alpha / 255
-								})`,
-							}}
-							title={`(${cell.column}, ${cell.row}) rgb(${red}, ${green}, ${blue})`}
-						/>
-					);
-				})}
+				{cells.map((cell) => (
+					<div
+						key={`${cell.column}-${cell.row}`}
+						className="sampling-cell"
+						style={{
+							backgroundColor: segmentColorMap[cell.segment],
+						}}
+						title={`(${cell.column}, ${cell.row}) luminance: ${cell.luminance} · ${cell.segment}`}
+					/>
+				))}
 			</div>
 		</section>
 	);
