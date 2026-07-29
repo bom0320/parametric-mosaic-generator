@@ -210,6 +210,14 @@
 	box-shadow: 0 8px 28px rgb(0 0 0 / 8%);
 }
 
+.generator-controls {
+	margin-top: 24px;
+}
+
+.generator-controls:empty {
+	display: none;
+}
+
 @media (max-width: 800px) {
 	.app {
 		padding: 20px;

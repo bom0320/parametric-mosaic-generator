@@ -2,12 +2,24 @@ import { useState } from "react";
 import "./App.css";
 import { FileUploader } from "./components/FileUploader/FileUploader";
 import { GeneratorCanvas } from "./components/GeneratorCanvas/GeneratorCanvas";
+import { GeneratorControls } from "./components/GeneratorControls/GeneratorControls";
 import { ParametricPreview } from "./components/ParametricPreview/ParametricPreview";
 import { SamplingPreview } from "./components/SamplingPreview/SamplingPreview";
+import type { GeneratorConfig } from "./generator/types/generator";
 import { useImageSource } from "./hooks/useImageSource";
+
+const DEFAULT_CONFIG: GeneratorConfig = {
+	columns: 60,
+	rows: 40,
+	cellSize: 12,
+	gap: 2,
+	mode: "width",
+};
 
 function App() {
 	const [sourceFile, setSourceFile] = useState<File | null>(null);
+	const [config, setConfig] = useState<GeneratorConfig>(DEFAULT_CONFIG);
+
 	const { image, error, isLoading } = useImageSource(sourceFile);
 
 	return (
@@ -43,6 +55,8 @@ function App() {
 					)}
 
 					{error && <p className="error-message">{error}</p>}
+
+					<GeneratorControls config={config} onChange={setConfig} />
 				</aside>
 
 				<section className="preview-panel">
@@ -52,8 +66,14 @@ function App() {
 					</div>
 
 					<GeneratorCanvas image={image} />
-					<SamplingPreview image={image} />
-					<ParametricPreview image={image} />
+
+					<SamplingPreview
+						image={image}
+						columns={config.columns}
+						rows={config.rows}
+					/>
+
+					<ParametricPreview image={image} config={config} />
 				</section>
 			</section>
 		</main>

@@ -1,21 +1,16 @@
 import { useEffect, useRef } from "react";
 import { sampleImage } from "../../generator/core/sampleImage";
-import { segmentStyleMap } from "../../generator/core/segmentColorMap";
+import { segmentStyleMap } from "../../generator/core/segmentStyleMap";
+import type { GeneratorConfig } from "../../generator/types/generator";
 
 type ParametricPreviewProps = {
 	image: HTMLImageElement | null;
-	columns?: number;
-	rows?: number;
-	cellSize?: number;
-	gap?: number;
+	config: GeneratorConfig;
 };
 
 export const ParametricPreview = ({
 	image,
-	columns = 60,
-	rows = 40,
-	cellSize = 12,
-	gap = 2,
+	config,
 }: ParametricPreviewProps) => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -32,15 +27,18 @@ export const ParametricPreview = ({
 			return;
 		}
 
-		const width = columns * cellSize;
-		const height = rows * cellSize;
+		const { columns, rows, cellSize, gap, mode } = config;
 
-		canvas.width = width;
-		canvas.height = height;
+		const canvasWidth = columns * cellSize;
+		const canvasHeight = rows * cellSize;
 
-		context.clearRect(0, 0, width, height);
+		canvas.width = canvasWidth;
+		canvas.height = canvasHeight;
+
+		context.clearRect(0, 0, canvasWidth, canvasHeight);
+
 		context.fillStyle = "#f5f1e8";
-		context.fillRect(0, 0, width, height);
+		context.fillRect(0, 0, canvasWidth, canvasHeight);
 
 		const cells = sampleImage(image, {
 			columns,
@@ -49,21 +47,24 @@ export const ParametricPreview = ({
 
 		for (const cell of cells) {
 			const style = segmentStyleMap[cell.segment];
+			const availableSize = Math.max(cellSize - gap, 0);
 
-			const availableSize = cellSize - gap;
-			const shapeWidth = availableSize * style.scale;
-			const shapeHeight = availableSize;
+			const shapeWidth =
+				mode === "width" ? availableSize * style.scale : availableSize;
+
+			const shapeHeight =
+				mode === "height" ? availableSize * style.scale : availableSize;
 
 			const cellX = cell.column * cellSize;
 			const cellY = cell.row * cellSize;
 
 			const shapeX = cellX + (cellSize - shapeWidth) / 2;
-			const shapeY = cellY + gap / 2;
+			const shapeY = cellY + (cellSize - shapeHeight) / 2;
 
 			context.fillStyle = style.color;
 			context.fillRect(shapeX, shapeY, shapeWidth, shapeHeight);
 		}
-	}, [image, columns, rows, cellSize, gap]);
+	}, [image, config]);
 
 	if (!image) {
 		return null;
@@ -75,7 +76,8 @@ export const ParametricPreview = ({
 				<h2>Parametric Preview</h2>
 
 				<span>
-					Width mode · {columns} × {rows}
+					{config.mode === "width" ? "Width" : "Height"} mode · {config.columns}{" "}
+					× {config.rows}
 				</span>
 			</div>
 
