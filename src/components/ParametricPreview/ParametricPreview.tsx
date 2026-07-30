@@ -1,6 +1,5 @@
 import { useEffect, useRef } from "react";
 import { sampleImage } from "../../generator/core/sampleImage";
-import { segmentStyleMap } from "../../generator/core/segmentStyleMap";
 import type { GeneratorConfig } from "../../generator/types/generator";
 
 type ParametricPreviewProps = {
@@ -46,14 +45,16 @@ export const ParametricPreview = ({
 		});
 
 		for (const cell of cells) {
-			const style = segmentStyleMap[cell.segment];
+			const style = config.segments[cell.segment];
 			const availableSize = Math.max(cellSize - gap, 0);
 
+			const normalizedLuminance = cell.luminance / 255;
+
 			const shapeWidth =
-				mode === "width" ? availableSize * style.scale : availableSize;
+				mode === "width" ? availableSize * normalizedLuminance : availableSize;
 
 			const shapeHeight =
-				mode === "height" ? availableSize * style.scale : availableSize;
+				mode === "height" ? availableSize * normalizedLuminance : availableSize;
 
 			const cellX = cell.column * cellSize;
 			const cellY = cell.row * cellSize;

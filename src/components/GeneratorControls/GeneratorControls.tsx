@@ -2,20 +2,12 @@ import { useEffect, useRef } from "react";
 import { Pane } from "tweakpane";
 import type {
 	GeneratorConfig,
-	RenderMode,
+	LuminanceSegment,
 } from "../../generator/types/generator";
 
 type GeneratorControlsProps = {
 	config: GeneratorConfig;
 	onChange: (config: GeneratorConfig) => void;
-};
-
-type PaneParams = {
-	columns: number;
-	rows: number;
-	cellSize: number;
-	gap: number;
-	mode: RenderMode;
 };
 
 export const GeneratorControls = ({
@@ -41,73 +33,61 @@ export const GeneratorControls = ({
 			return;
 		}
 
-		const params: PaneParams = {
-			...configRef.current,
-		};
+		const params: GeneratorConfig = structuredClone(configRef.current);
 
 		const pane = new Pane({
 			container,
 			title: "Generator",
 		});
 
-		const updateConfig = <Key extends keyof GeneratorConfig>(
-			key: Key,
-			value: GeneratorConfig[Key],
-		) => {
-			const nextConfig = {
-				...configRef.current,
-				[key]: value,
-			};
+		const updateConfig = () => {
+			const nextConfig = structuredClone(params);
 
 			configRef.current = nextConfig;
 			onChangeRef.current(nextConfig);
 		};
 
-		pane
+		const gridFolder = pane.addFolder({
+			title: "Grid",
+		});
+
+		gridFolder
 			.addBinding(params, "columns", {
 				label: "Columns",
 				min: 10,
 				max: 120,
 				step: 1,
 			})
-			.on("change", (event) => {
-				updateConfig("columns", event.value);
-			});
+			.on("change", updateConfig);
 
-		pane
+		gridFolder
 			.addBinding(params, "rows", {
 				label: "Rows",
 				min: 10,
 				max: 120,
 				step: 1,
 			})
-			.on("change", (event) => {
-				updateConfig("rows", event.value);
-			});
+			.on("change", updateConfig);
 
-		pane
+		gridFolder
 			.addBinding(params, "cellSize", {
 				label: "Cell size",
 				min: 4,
 				max: 24,
 				step: 1,
 			})
-			.on("change", (event) => {
-				updateConfig("cellSize", event.value);
-			});
+			.on("change", updateConfig);
 
-		pane
+		gridFolder
 			.addBinding(params, "gap", {
 				label: "Gap",
 				min: 0,
 				max: 10,
 				step: 1,
 			})
-			.on("change", (event) => {
-				updateConfig("gap", event.value);
-			});
+			.on("change", updateConfig);
 
-		pane
+		gridFolder
 			.addBinding(params, "mode", {
 				label: "Mode",
 				options: {
@@ -115,9 +95,23 @@ export const GeneratorControls = ({
 					Height: "height",
 				},
 			})
-			.on("change", (event) => {
-				updateConfig("mode", event.value);
+			.on("change", updateConfig);
+
+		const segmentNames: LuminanceSegment[] = ["dark", "mid", "light"];
+
+		for (const segmentName of segmentNames) {
+			const segment = params.segments[segmentName];
+
+			const segmentFolder = pane.addFolder({
+				title: segmentName.charAt(0).toUpperCase() + segmentName.slice(1),
 			});
+
+			segmentFolder
+				.addBinding(segment, "color", {
+					label: "Color",
+				})
+				.on("change", updateConfig);
+		}
 
 		return () => {
 			pane.dispose();

@@ -16,6 +16,17 @@ const DEFAULT_CONFIG: GeneratorConfig = {
 	cellSize: 12,
 	gap: 2,
 	mode: "width",
+	segments: {
+		dark: {
+			color: "#202020",
+		},
+		mid: {
+			color: "#e05d35",
+		},
+		light: {
+			color: "#f3cc4f",
+		},
+	},
 };
 
 function App() {
