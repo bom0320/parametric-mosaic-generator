@@ -1,9 +1,6 @@
 import { useEffect, useRef } from "react";
 import { Pane } from "tweakpane";
-import type {
-	GeneratorConfig,
-	LuminanceSegment,
-} from "../../generator/types/generator";
+import type { GeneratorConfig } from "../../generator/types/generator";
 
 type GeneratorControlsProps = {
 	config: GeneratorConfig;
@@ -40,7 +37,7 @@ export const GeneratorControls = ({
 			title: "Generator",
 		});
 
-		const updateConfig = () => {
+		const emitConfigChange = () => {
 			const nextConfig = structuredClone(params);
 
 			configRef.current = nextConfig;
@@ -49,34 +46,35 @@ export const GeneratorControls = ({
 
 		const gridFolder = pane.addFolder({
 			title: "Grid",
+			expanded: true,
 		});
 
 		gridFolder
-			.addBinding(params, "columns", {
-				label: "Columns",
+			.addBinding(params, "tilesX", {
+				label: "Tiles X",
 				min: 10,
-				max: 120,
+				max: 160,
 				step: 1,
 			})
-			.on("change", updateConfig);
+			.on("change", emitConfigChange);
 
 		gridFolder
-			.addBinding(params, "rows", {
-				label: "Rows",
+			.addBinding(params, "tilesY", {
+				label: "Tiles Y",
 				min: 10,
-				max: 120,
+				max: 160,
 				step: 1,
 			})
-			.on("change", updateConfig);
+			.on("change", emitConfigChange);
 
 		gridFolder
 			.addBinding(params, "cellSize", {
-				label: "Cell size",
+				label: "Cell Size",
 				min: 4,
 				max: 24,
 				step: 1,
 			})
-			.on("change", updateConfig);
+			.on("change", emitConfigChange);
 
 		gridFolder
 			.addBinding(params, "gap", {
@@ -85,33 +83,45 @@ export const GeneratorControls = ({
 				max: 10,
 				step: 1,
 			})
-			.on("change", updateConfig);
+			.on("change", emitConfigChange);
 
-		gridFolder
-			.addBinding(params, "mode", {
-				label: "Mode",
+		const blindsFolder = pane.addFolder({
+			title: "Blinds",
+			expanded: true,
+		});
+
+		blindsFolder
+			.addBinding(params, "direction", {
+				label: "Direction",
 				options: {
-					Width: "width",
-					Height: "height",
+					Horizontal: "horizontal",
+					Vertical: "vertical",
 				},
 			})
-			.on("change", updateConfig);
+			.on("change", emitConfigChange);
 
-		const segmentNames: LuminanceSegment[] = ["dark", "mid", "light"];
+		const paletteFolder = pane.addFolder({
+			title: "Palette",
+			expanded: true,
+		});
 
-		for (const segmentName of segmentNames) {
-			const segment = params.segments[segmentName];
+		paletteFolder
+			.addBinding(params.segments.dark, "color", {
+				label: "Color 1",
+			})
+			.on("change", emitConfigChange);
 
-			const segmentFolder = pane.addFolder({
-				title: segmentName.charAt(0).toUpperCase() + segmentName.slice(1),
-			});
+		paletteFolder
+			.addBinding(params.segments.mid, "color", {
+				label: "Color 2",
+			})
+			.on("change", emitConfigChange);
 
-			segmentFolder
-				.addBinding(segment, "color", {
-					label: "Color",
-				})
-				.on("change", updateConfig);
-		}
+		paletteFolder
+			.addBinding(params.segments.light, "color", {
+				label: "Color 3",
+			})
+			.on("change", emitConfigChange);
 
 		return () => {
 			pane.dispose();

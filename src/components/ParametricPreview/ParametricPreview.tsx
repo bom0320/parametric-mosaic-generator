@@ -31,14 +31,16 @@ export const ParametricPreview = ({
 		return null;
 	}
 
+	const directionLabel =
+		config.direction === "horizontal" ? "Horizontal" : "Vertical";
+
 	return (
 		<section className="parametric-preview">
 			<div className="parametric-preview-header">
 				<h2>Parametric Preview</h2>
 
 				<span>
-					{config.mode === "width" ? "Width" : "Height"} mode · {config.columns}{" "}
-					× {config.rows}
+					{directionLabel} blinds · {config.tilesX} × {config.tilesY}
 				</span>
 			</div>
 

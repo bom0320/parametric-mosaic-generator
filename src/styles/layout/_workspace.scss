@@ -1,8 +1,14 @@
 .workspace {
   display: grid;
-  grid-template-columns: 280px minmax(0, 1fr);
+  grid-template-columns: 360px minmax(0, 1fr);
   min-height: 720px;
   border: 1px solid #d8d8d8;
+}
+
+@media (max-width: 1000px) {
+  .workspace {
+    grid-template-columns: 320px minmax(0, 1fr);
+  }
 }
 
 @media (max-width: 800px) {

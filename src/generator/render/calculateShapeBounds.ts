@@ -1,4 +1,4 @@
-import type { RenderMode } from "../types/generator";
+import type { BlindDirection } from "../types/generator";
 
 type CalculateShapeBoundsOptions = {
 	column: number;
@@ -6,7 +6,7 @@ type CalculateShapeBoundsOptions = {
 	cellSize: number;
 	gap: number;
 	luminance: number;
-	mode: RenderMode;
+	direction: BlindDirection;
 };
 
 export type ShapeBounds = {
@@ -24,16 +24,20 @@ export const calculateShapeBounds = ({
 	cellSize,
 	gap,
 	luminance,
-	mode,
+	direction,
 }: CalculateShapeBoundsOptions): ShapeBounds => {
 	const availableSize = Math.max(cellSize - gap, 0);
 	const normalizedLuminance = luminance / MAX_LUMINANCE;
 
 	const width =
-		mode === "width" ? availableSize * normalizedLuminance : availableSize;
+		direction === "vertical"
+			? availableSize * normalizedLuminance
+			: availableSize;
 
 	const height =
-		mode === "height" ? availableSize * normalizedLuminance : availableSize;
+		direction === "horizontal"
+			? availableSize * normalizedLuminance
+			: availableSize;
 
 	const cellX = column * cellSize;
 	const cellY = row * cellSize;

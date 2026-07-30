@@ -21,10 +21,10 @@ export const renderParametricCanvas = ({
 		throw new Error("Failed to create a 2D canvas context.");
 	}
 
-	const { columns, rows, cellSize, gap, mode, segments } = config;
+	const { tilesX, tilesY, cellSize, gap, direction, segments } = config;
 
-	const canvasWidth = columns * cellSize;
-	const canvasHeight = rows * cellSize;
+	const canvasWidth = tilesX * cellSize;
+	const canvasHeight = tilesY * cellSize;
 
 	canvas.width = canvasWidth;
 	canvas.height = canvasHeight;
@@ -35,8 +35,8 @@ export const renderParametricCanvas = ({
 	context.fillRect(0, 0, canvasWidth, canvasHeight);
 
 	const cells = sampleImage(image, {
-		columns,
-		rows,
+		columns: tilesX,
+		rows: tilesY,
 	});
 
 	for (const cell of cells) {
@@ -46,11 +46,10 @@ export const renderParametricCanvas = ({
 			cellSize,
 			gap,
 			luminance: cell.luminance,
-			mode,
+			direction,
 		});
 
 		context.fillStyle = segments[cell.segment].color;
-
 		context.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
 	}
 };

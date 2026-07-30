@@ -49,8 +49,8 @@ export const PreviewPanel = ({ image, config }: PreviewPanelProps) => {
 				return (
 					<SamplingPreview
 						image={image}
-						columns={config.columns}
-						rows={config.rows}
+						columns={config.tilesX}
+						rows={config.tilesY}
 					/>
 				);
 

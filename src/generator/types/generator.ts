@@ -7,7 +7,7 @@ export type RGBColor = {
 
 export type LuminanceSegment = "dark" | "mid" | "light";
 
-export type RenderMode = "width" | "height";
+export type BlindDirection = "horizontal" | "vertical";
 
 export type SegmentStyle = {
 	color: string;
@@ -16,11 +16,11 @@ export type SegmentStyle = {
 export type SegmentStyles = Record<LuminanceSegment, SegmentStyle>;
 
 export type GeneratorConfig = {
-	columns: number;
-	rows: number;
+	tilesX: number;
+	tilesY: number;
 	cellSize: number;
 	gap: number;
-	mode: RenderMode;
+	direction: BlindDirection;
 	segments: SegmentStyles;
 };
 

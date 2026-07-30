@@ -1,7 +1,16 @@
 .generator-controls {
+  --tp-blade-unit-size: 32px;
+  --tp-blade-value-width: 140px;
+  --tp-blade-label-width: 100px;
+
+  width: 100%;
   margin-top: 24px;
 
   &:empty {
     display: none;
+  }
+
+  > div {
+    width: 100%;
   }
 }
