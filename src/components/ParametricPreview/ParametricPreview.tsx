@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { sampleImage } from "../../generator/core/sampleImage";
+import { renderParametricCanvas } from "../../generator/render/renderParametricCanvas";
 import type { GeneratorConfig } from "../../generator/types/generator";
 
 type ParametricPreviewProps = {
@@ -20,51 +20,11 @@ export const ParametricPreview = ({
 			return;
 		}
 
-		const context = canvas.getContext("2d");
-
-		if (!context) {
-			return;
-		}
-
-		const { columns, rows, cellSize, gap, mode } = config;
-
-		const canvasWidth = columns * cellSize;
-		const canvasHeight = rows * cellSize;
-
-		canvas.width = canvasWidth;
-		canvas.height = canvasHeight;
-
-		context.clearRect(0, 0, canvasWidth, canvasHeight);
-
-		context.fillStyle = "#f5f1e8";
-		context.fillRect(0, 0, canvasWidth, canvasHeight);
-
-		const cells = sampleImage(image, {
-			columns,
-			rows,
+		renderParametricCanvas({
+			canvas,
+			image,
+			config,
 		});
-
-		for (const cell of cells) {
-			const style = config.segments[cell.segment];
-			const availableSize = Math.max(cellSize - gap, 0);
-
-			const normalizedLuminance = cell.luminance / 255;
-
-			const shapeWidth =
-				mode === "width" ? availableSize * normalizedLuminance : availableSize;
-
-			const shapeHeight =
-				mode === "height" ? availableSize * normalizedLuminance : availableSize;
-
-			const cellX = cell.column * cellSize;
-			const cellY = cell.row * cellSize;
-
-			const shapeX = cellX + (cellSize - shapeWidth) / 2;
-			const shapeY = cellY + (cellSize - shapeHeight) / 2;
-
-			context.fillStyle = style.color;
-			context.fillRect(shapeX, shapeY, shapeWidth, shapeHeight);
-		}
 	}, [image, config]);
 
 	if (!image) {
