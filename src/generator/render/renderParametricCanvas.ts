@@ -1,5 +1,6 @@
 import { sampleImage } from "../core/sampleImage";
 import type { GeneratorConfig } from "../types/generator";
+import { calculateCanvasSize } from "./calculateCanvasSize";
 import { calculateShapeBounds } from "./calculateShapeBounds";
 
 type RenderParametricCanvasOptions = {
@@ -21,18 +22,13 @@ export const renderParametricCanvas = ({
 		throw new Error("Failed to create a 2D canvas context.");
 	}
 
-	const {
-		tilesX,
-		tilesY,
-		cellSize,
-		gap,
-		direction,
-		imageAdjustments,
-		segments,
-	} = config;
+	const { tilesX, tilesY, gap, direction, imageAdjustments, segments } = config;
 
-	const canvasWidth = tilesX * cellSize;
-	const canvasHeight = tilesY * cellSize;
+	const { width: canvasWidth, height: canvasHeight } =
+		calculateCanvasSize(image);
+
+	const cellWidth = canvasWidth / tilesX;
+	const cellHeight = canvasHeight / tilesY;
 
 	canvas.width = canvasWidth;
 	canvas.height = canvasHeight;
@@ -52,7 +48,8 @@ export const renderParametricCanvas = ({
 		const bounds = calculateShapeBounds({
 			column: cell.column,
 			row: cell.row,
-			cellSize,
+			cellWidth,
+			cellHeight,
 			gap,
 			luminance: cell.luminance,
 			direction,

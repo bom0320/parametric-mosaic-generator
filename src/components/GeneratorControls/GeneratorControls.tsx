@@ -68,15 +68,6 @@ export const GeneratorControls = ({
 			.on("change", emitConfigChange);
 
 		gridFolder
-			.addBinding(params, "cellSize", {
-				label: "Cell Size",
-				min: 4,
-				max: 24,
-				step: 1,
-			})
-			.on("change", emitConfigChange);
-
-		gridFolder
 			.addBinding(params, "gap", {
 				label: "Gap",
 				min: 0,

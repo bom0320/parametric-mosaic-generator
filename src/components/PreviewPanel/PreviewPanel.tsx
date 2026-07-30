@@ -2,9 +2,8 @@ import { useState } from "react";
 import type { GeneratorConfig } from "../../generator/types/generator";
 import { GeneratorCanvas } from "../GeneratorCanvas/GeneratorCanvas";
 import { ParametricPreview } from "../ParametricPreview/ParametricPreview";
-import { SamplingPreview } from "../SamplingPreview/SamplingPreview";
 
-type PreviewMode = "original" | "luminance" | "parametric";
+type PreviewMode = "original" | "parametric";
 
 type PreviewPanelProps = {
 	image: HTMLImageElement | null;
@@ -18,10 +17,6 @@ const PREVIEW_MODES: Array<{
 	{
 		label: "Original",
 		value: "original",
-	},
-	{
-		label: "Luminance",
-		value: "luminance",
 	},
 	{
 		label: "Parametric",
@@ -44,16 +39,6 @@ export const PreviewPanel = ({ image, config }: PreviewPanelProps) => {
 		switch (previewMode) {
 			case "original":
 				return <GeneratorCanvas image={image} />;
-
-			case "luminance":
-				return (
-					<SamplingPreview
-						image={image}
-						columns={config.tilesX}
-						rows={config.tilesY}
-						adjustments={config.imageAdjustments}
-					/>
-				);
 
 			case "parametric":
 				return <ParametricPreview image={image} config={config} />;

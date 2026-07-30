@@ -23,7 +23,6 @@ export type ImageAdjustments = {
 export type GeneratorConfig = {
 	tilesX: number;
 	tilesY: number;
-	cellSize: number;
 	gap: number;
 	direction: BlindDirection;
 	imageAdjustments: ImageAdjustments;

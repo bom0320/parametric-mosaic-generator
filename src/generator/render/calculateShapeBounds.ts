@@ -3,7 +3,8 @@ import type { BlindDirection } from "../types/generator";
 type CalculateShapeBoundsOptions = {
 	column: number;
 	row: number;
-	cellSize: number;
+	cellWidth: number;
+	cellHeight: number;
 	gap: number;
 	luminance: number;
 	direction: BlindDirection;
@@ -21,30 +22,32 @@ const MAX_LUMINANCE = 255;
 export const calculateShapeBounds = ({
 	column,
 	row,
-	cellSize,
+	cellWidth,
+	cellHeight,
 	gap,
 	luminance,
 	direction,
 }: CalculateShapeBoundsOptions): ShapeBounds => {
-	const availableSize = Math.max(cellSize - gap, 0);
+	const availableWidth = Math.max(cellWidth - gap, 0);
+	const availableHeight = Math.max(cellHeight - gap, 0);
 	const normalizedLuminance = luminance / MAX_LUMINANCE;
 
 	const width =
 		direction === "vertical"
-			? availableSize * normalizedLuminance
-			: availableSize;
+			? availableWidth * normalizedLuminance
+			: availableWidth;
 
 	const height =
 		direction === "horizontal"
-			? availableSize * normalizedLuminance
-			: availableSize;
+			? availableHeight * normalizedLuminance
+			: availableHeight;
 
-	const cellX = column * cellSize;
-	const cellY = row * cellSize;
+	const cellX = column * cellWidth;
+	const cellY = row * cellHeight;
 
 	return {
-		x: cellX + (cellSize - width) / 2,
-		y: cellY + (cellSize - height) / 2,
+		x: cellX + (cellWidth - width) / 2,
+		y: cellY + (cellHeight - height) / 2,
 		width,
 		height,
 	};
