@@ -99,6 +99,15 @@ export const GeneratorControls = ({
 			})
 			.on("change", emitConfigChange);
 
+		imageFolder
+			.addBinding(params.imageAdjustments, "blur", {
+				label: "Blur",
+				min: 0,
+				max: 7,
+				step: 1,
+			})
+			.on("change", emitConfigChange);
+
 		const blindsFolder = pane.addFolder({
 			title: "Blinds",
 			expanded: true,

@@ -4,6 +4,7 @@ import type {
 	SampledCell,
 } from "../types/generator";
 import { adjustColor } from "./adjustColor";
+import { blurImageData } from "./blurImageData";
 import { calculateLuminance } from "./calculateLuminance";
 
 type SampleImageOptions = {
@@ -15,6 +16,7 @@ type SampleImageOptions = {
 const DEFAULT_ADJUSTMENTS: ImageAdjustments = {
 	brightness: 0,
 	contrast: 0,
+	blur: 0,
 };
 
 export const sampleImage = (
@@ -28,20 +30,26 @@ export const sampleImage = (
 	}
 
 	const canvas = document.createElement("canvas");
+
+	canvas.width = columns;
+	canvas.height = rows;
+
 	const context = canvas.getContext("2d", {
 		willReadFrequently: true,
 	});
 
 	if (!context) {
-		throw new Error("Failed to create a 2D canvas context.");
+		throw new Error("Failed to create a sampling canvas context.");
 	}
 
-	canvas.width = columns;
-	canvas.height = rows;
+	context.imageSmoothingEnabled = true;
+	context.imageSmoothingQuality = "high";
 
 	context.drawImage(image, 0, 0, columns, rows);
 
-	const imageData = context.getImageData(0, 0, columns, rows);
+	const sourceImageData = context.getImageData(0, 0, columns, rows);
+
+	const imageData = blurImageData(sourceImageData, adjustments.blur);
 
 	const cells: SampledCell[] = [];
 

@@ -8,6 +8,7 @@ export const DEFAULT_GENERATOR_CONFIG: GeneratorConfig = {
 	imageAdjustments: {
 		brightness: 0,
 		contrast: 0,
+		blur: 0,
 	},
 	palette: {
 		col1: "#2557a5",
