@@ -9,15 +9,10 @@ export const DEFAULT_GENERATOR_CONFIG: GeneratorConfig = {
 		brightness: 0,
 		contrast: 0,
 	},
-	segments: {
-		dark: {
-			color: "#202020",
-		},
-		mid: {
-			color: "#e05d35",
-		},
-		light: {
-			color: "#f3cc4f",
-		},
+	palette: {
+		col1: "#2557a5",
+		col2: "#00c864",
+		col3: "#ff6400",
+		col4: "#ffffff",
 	},
 };

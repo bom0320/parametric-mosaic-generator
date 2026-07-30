@@ -1,3 +1,4 @@
+import { findLuminanceStep } from "../core/findLuminanceStep";
 import { sampleImage } from "../core/sampleImage";
 import type { GeneratorConfig } from "../types/generator";
 import { calculateCanvasSize } from "./calculateCanvasSize";
@@ -22,7 +23,7 @@ export const renderParametricCanvas = ({
 		throw new Error("Failed to create a 2D canvas context.");
 	}
 
-	const { tilesX, tilesY, gap, direction, imageAdjustments, segments } = config;
+	const { tilesX, tilesY, gap, direction, imageAdjustments, palette } = config;
 
 	const { width: canvasWidth, height: canvasHeight } =
 		calculateCanvasSize(image);
@@ -45,17 +46,20 @@ export const renderParametricCanvas = ({
 	});
 
 	for (const cell of cells) {
+		const step = findLuminanceStep(cell.luminance);
+
 		const bounds = calculateShapeBounds({
 			column: cell.column,
 			row: cell.row,
 			cellWidth,
 			cellHeight,
 			gap,
-			luminance: cell.luminance,
+			scale: step.scale,
 			direction,
 		});
 
-		context.fillStyle = segments[cell.segment].color;
+		context.fillStyle = palette[step.paletteKey];
+
 		context.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
 	}
 };

@@ -5,7 +5,6 @@ import type {
 } from "../types/generator";
 import { adjustColor } from "./adjustColor";
 import { calculateLuminance } from "./calculateLuminance";
-import { mapLuminanceToSegment } from "./mapLuminanceToSegment";
 
 type SampleImageOptions = {
 	columns: number;
@@ -60,14 +59,12 @@ export const sampleImage = (
 			const color = adjustColor(sourceColor, adjustments);
 
 			const luminance = calculateLuminance(color);
-			const segment = mapLuminanceToSegment(luminance);
 
 			cells.push({
 				column,
 				row,
 				color,
 				luminance,
-				segment,
 			});
 		}
 	}

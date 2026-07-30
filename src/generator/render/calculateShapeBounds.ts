@@ -6,7 +6,7 @@ type CalculateShapeBoundsOptions = {
 	cellWidth: number;
 	cellHeight: number;
 	gap: number;
-	luminance: number;
+	scale: number;
 	direction: BlindDirection;
 };
 
@@ -17,30 +17,24 @@ export type ShapeBounds = {
 	height: number;
 };
 
-const MAX_LUMINANCE = 255;
-
 export const calculateShapeBounds = ({
 	column,
 	row,
 	cellWidth,
 	cellHeight,
 	gap,
-	luminance,
+	scale,
 	direction,
 }: CalculateShapeBoundsOptions): ShapeBounds => {
 	const availableWidth = Math.max(cellWidth - gap, 0);
 	const availableHeight = Math.max(cellHeight - gap, 0);
-	const normalizedLuminance = luminance / MAX_LUMINANCE;
+	const safeScale = Math.min(Math.max(scale, 0), 1);
 
 	const width =
-		direction === "vertical"
-			? availableWidth * normalizedLuminance
-			: availableWidth;
+		direction === "vertical" ? availableWidth * safeScale : availableWidth;
 
 	const height =
-		direction === "horizontal"
-			? availableHeight * normalizedLuminance
-			: availableHeight;
+		direction === "horizontal" ? availableHeight * safeScale : availableHeight;
 
 	const cellX = column * cellWidth;
 	const cellY = row * cellHeight;

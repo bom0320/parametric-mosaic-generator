@@ -120,20 +120,26 @@ export const GeneratorControls = ({
 		});
 
 		paletteFolder
-			.addBinding(params.segments.dark, "color", {
-				label: "Color 1",
+			.addBinding(params.palette, "col1", {
+				label: "col1",
 			})
 			.on("change", emitConfigChange);
 
 		paletteFolder
-			.addBinding(params.segments.mid, "color", {
-				label: "Color 2",
+			.addBinding(params.palette, "col2", {
+				label: "col2",
 			})
 			.on("change", emitConfigChange);
 
 		paletteFolder
-			.addBinding(params.segments.light, "color", {
-				label: "Color 3",
+			.addBinding(params.palette, "col3", {
+				label: "col3",
+			})
+			.on("change", emitConfigChange);
+
+		paletteFolder
+			.addBinding(params.palette, "col4", {
+				label: "col4",
 			})
 			.on("change", emitConfigChange);
 

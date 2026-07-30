@@ -5,19 +5,18 @@ export type RGBColor = {
 	alpha: number;
 };
 
-export type LuminanceSegment = "dark" | "mid" | "light";
-
 export type BlindDirection = "horizontal" | "vertical";
-
-export type SegmentStyle = {
-	color: string;
-};
-
-export type SegmentStyles = Record<LuminanceSegment, SegmentStyle>;
 
 export type ImageAdjustments = {
 	brightness: number;
 	contrast: number;
+};
+
+export type Palette = {
+	col1: string;
+	col2: string;
+	col3: string;
+	col4: string;
 };
 
 export type GeneratorConfig = {
@@ -26,7 +25,7 @@ export type GeneratorConfig = {
 	gap: number;
 	direction: BlindDirection;
 	imageAdjustments: ImageAdjustments;
-	segments: SegmentStyles;
+	palette: Palette;
 };
 
 export type SampledCell = {
@@ -34,5 +33,4 @@ export type SampledCell = {
 	row: number;
 	color: RGBColor;
 	luminance: number;
-	segment: LuminanceSegment;
 };
