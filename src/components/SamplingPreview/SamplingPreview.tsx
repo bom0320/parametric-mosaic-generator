@@ -1,17 +1,20 @@
 import { useMemo } from "react";
 import { sampleImage } from "../../generator/core/sampleImage";
 import { segmentColorMap } from "../../generator/core/segmentColorMap";
+import type { ImageAdjustments } from "../../generator/types/generator";
 
 type SamplingPreviewProps = {
 	image: HTMLImageElement | null;
 	columns?: number;
 	rows?: number;
+	adjustments: ImageAdjustments;
 };
 
 export const SamplingPreview = ({
 	image,
 	columns = 60,
 	rows = 40,
+	adjustments,
 }: SamplingPreviewProps) => {
 	const cells = useMemo(() => {
 		if (!image) {
@@ -21,8 +24,9 @@ export const SamplingPreview = ({
 		return sampleImage(image, {
 			columns,
 			rows,
+			adjustments,
 		});
-	}, [image, columns, rows]);
+	}, [image, columns, rows, adjustments]);
 
 	if (!image) {
 		return null;

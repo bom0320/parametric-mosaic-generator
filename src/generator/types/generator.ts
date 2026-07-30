@@ -15,12 +15,18 @@ export type SegmentStyle = {
 
 export type SegmentStyles = Record<LuminanceSegment, SegmentStyle>;
 
+export type ImageAdjustments = {
+	brightness: number;
+	contrast: number;
+};
+
 export type GeneratorConfig = {
 	tilesX: number;
 	tilesY: number;
 	cellSize: number;
 	gap: number;
 	direction: BlindDirection;
+	imageAdjustments: ImageAdjustments;
 	segments: SegmentStyles;
 };
 

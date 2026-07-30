@@ -5,7 +5,11 @@ export const DEFAULT_GENERATOR_CONFIG: GeneratorConfig = {
 	tilesY: 40,
 	cellSize: 12,
 	gap: 2,
-	direction: "vertical",
+	direction: "horizontal",
+	imageAdjustments: {
+		brightness: 0,
+		contrast: 0,
+	},
 	segments: {
 		dark: {
 			color: "#202020",

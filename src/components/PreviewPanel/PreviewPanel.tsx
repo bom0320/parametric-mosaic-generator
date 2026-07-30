@@ -51,6 +51,7 @@ export const PreviewPanel = ({ image, config }: PreviewPanelProps) => {
 						image={image}
 						columns={config.tilesX}
 						rows={config.tilesY}
+						adjustments={config.imageAdjustments}
 					/>
 				);
 

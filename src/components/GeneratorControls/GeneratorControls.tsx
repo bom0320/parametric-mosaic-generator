@@ -85,6 +85,29 @@ export const GeneratorControls = ({
 			})
 			.on("change", emitConfigChange);
 
+		const imageFolder = pane.addFolder({
+			title: "Image",
+			expanded: true,
+		});
+
+		imageFolder
+			.addBinding(params.imageAdjustments, "brightness", {
+				label: "Brightness",
+				min: -100,
+				max: 100,
+				step: 1,
+			})
+			.on("change", emitConfigChange);
+
+		imageFolder
+			.addBinding(params.imageAdjustments, "contrast", {
+				label: "Contrast",
+				min: -100,
+				max: 100,
+				step: 1,
+			})
+			.on("change", emitConfigChange);
+
 		const blindsFolder = pane.addFolder({
 			title: "Blinds",
 			expanded: true,

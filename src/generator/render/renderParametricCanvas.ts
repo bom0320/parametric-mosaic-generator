@@ -21,7 +21,15 @@ export const renderParametricCanvas = ({
 		throw new Error("Failed to create a 2D canvas context.");
 	}
 
-	const { tilesX, tilesY, cellSize, gap, direction, segments } = config;
+	const {
+		tilesX,
+		tilesY,
+		cellSize,
+		gap,
+		direction,
+		imageAdjustments,
+		segments,
+	} = config;
 
 	const canvasWidth = tilesX * cellSize;
 	const canvasHeight = tilesY * cellSize;
@@ -37,6 +45,7 @@ export const renderParametricCanvas = ({
 	const cells = sampleImage(image, {
 		columns: tilesX,
 		rows: tilesY,
+		adjustments: imageAdjustments,
 	});
 
 	for (const cell of cells) {
