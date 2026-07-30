@@ -1,0 +1,37 @@
+.app {
+  width: min(1440px, 100%);
+  margin: 0 auto;
+  padding: 40px;
+}
+
+.app-header {
+  margin-bottom: 40px;
+
+  h1 {
+    margin: 8px 0 12px;
+    font-size: clamp(32px, 5vw, 64px);
+    letter-spacing: -0.04em;
+  }
+
+  p {
+    margin: 0;
+    color: #777;
+  }
+}
+
+.eyebrow {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 800px) {
+  .app {
+    padding: 20px;
+  }
+
+  .app-header {
+    margin-bottom: 24px;
+  }
+}
