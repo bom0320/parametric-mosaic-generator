@@ -6,23 +6,25 @@ type GeneratorControlsProps = {
 	config: GeneratorConfig;
 	onChange: (config: GeneratorConfig) => void;
 	onAnimate: () => void;
-	animationCompletedId: number;
+	completedAnimationRunId: number;
 };
 
 export const GeneratorControls = ({
 	config,
 	onChange,
 	onAnimate,
-	animationCompletedId,
+	completedAnimationRunId,
 }: GeneratorControlsProps) => {
 	const containerRef = useRef<HTMLDivElement>(null);
+
 	const configRef = useRef(config);
 	const onChangeRef = useRef(onChange);
 	const onAnimateRef = useRef(onAnimate);
 
 	const paramsRef = useRef<GeneratorConfig | null>(null);
 	const paneRef = useRef<Pane | null>(null);
-	const previousCompletedIdRef = useRef(animationCompletedId);
+
+	const previousCompletedRunIdRef = useRef(completedAnimationRunId);
 
 	useEffect(() => {
 		configRef.current = config;
@@ -37,11 +39,14 @@ export const GeneratorControls = ({
 	}, [onAnimate]);
 
 	useEffect(() => {
-		if (animationCompletedId === previousCompletedIdRef.current) {
+		const isNewCompletion =
+			completedAnimationRunId !== previousCompletedRunIdRef.current;
+
+		if (!isNewCompletion) {
 			return;
 		}
 
-		previousCompletedIdRef.current = animationCompletedId;
+		previousCompletedRunIdRef.current = completedAnimationRunId;
 
 		const params = paramsRef.current;
 		const pane = paneRef.current;
@@ -51,12 +56,12 @@ export const GeneratorControls = ({
 		}
 
 		/*
-		 * 애니메이션이 끝난 뒤 드롭다운 표시만 Open으로 바꾼다.
+		 * Animate 재생이 끝난 뒤 드롭다운 표시만 Open으로 변경한다.
 		 * onChange를 호출하지 않으므로 Open 애니메이션은 실행되지 않는다.
 		 */
 		params.animationMode = "open";
 		pane.refresh();
-	}, [animationCompletedId]);
+	}, [completedAnimationRunId]);
 
 	useEffect(() => {
 		const container = containerRef.current;
@@ -85,8 +90,8 @@ export const GeneratorControls = ({
 		const handleAnimationModeChange = () => {
 			if (params.animationMode === "animate") {
 				/*
-				 * Animate 표시를 유지한 상태로
-				 * 일회성 애니메이션을 시작한다.
+				 * Animate를 config에 저장하지 않고
+				 * 별도의 실행 신호만 발생시킨다.
 				 */
 				onAnimateRef.current();
 				return;

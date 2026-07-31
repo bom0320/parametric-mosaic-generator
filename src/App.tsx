@@ -14,23 +14,25 @@ function App() {
 	);
 
 	const [animationRunId, setAnimationRunId] = useState(0);
-	const [animationCompletedId, setAnimationCompletedId] = useState(0);
+	const [completedAnimationRunId, setCompletedAnimationRunId] = useState(0);
 
 	const { image, error, isLoading } = useImageSource(sourceFile);
 
 	const handleAnimate = useCallback(() => {
-		setAnimationRunId((currentId) => currentId + 1);
+		setAnimationRunId((currentRunId) => currentRunId + 1);
 	}, []);
 
 	const handleAnimationComplete = useCallback(() => {
-		setAnimationCompletedId((currentId) => currentId + 1);
+		setCompletedAnimationRunId((currentRunId) => currentRunId + 1);
 	}, []);
 
 	return (
 		<main className="app">
 			<header className="app-header">
 				<p className="eyebrow">Core Experiment 01</p>
+
 				<h1>Parametric Mosaic Generator</h1>
+
 				<p>이미지를 분석하고 명암에 따라 도형의 크기를 변환합니다.</p>
 			</header>
 
@@ -43,7 +45,7 @@ function App() {
 					onFileChange={setSourceFile}
 					onConfigChange={setConfig}
 					onAnimate={handleAnimate}
-					animationCompletedId={animationCompletedId}
+					completedAnimationRunId={completedAnimationRunId}
 				/>
 
 				<PreviewPanel
