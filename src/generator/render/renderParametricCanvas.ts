@@ -2,12 +2,13 @@ import { calculateAnimatedRowScale } from "../core/calculateAnimatedRowScale";
 import { findLuminanceStep } from "../core/findLuminanceStep";
 import { sampleImage } from "../core/sampleImage";
 import type { GeneratorConfig } from "../types/generator";
+import type { VisualSource } from "../types/source";
 import { calculateCanvasSize } from "./calculateCanvasSize";
 import { calculateShapeBounds } from "./calculateShapeBounds";
 
 type RenderParametricCanvasOptions = {
 	canvas: HTMLCanvasElement;
-	image: HTMLImageElement;
+	image: VisualSource;
 	config: GeneratorConfig;
 	animationProgress: number;
 	isAnimating: boolean;

@@ -2,12 +2,13 @@ import JSZip from "jszip";
 import { canvasToBlob } from "../../utils/canvasToBlob";
 import { renderParametricCanvas } from "../render/renderParametricCanvas";
 import type { GeneratorConfig } from "../types/generator";
+import type { VisualSource } from "../types/source";
 
 const DEFAULT_FRAME_RATE = 30;
 const DEFAULT_DURATION = 5000;
 
 type CreateAnimationFramesZipOptions = {
-	image: HTMLImageElement;
+	image: VisualSource;
 	config: GeneratorConfig;
 	frameRate?: number;
 	duration?: number;

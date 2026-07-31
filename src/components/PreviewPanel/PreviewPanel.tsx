@@ -1,12 +1,13 @@
 import { useState } from "react";
 import type { GeneratorConfig } from "../../generator/types/generator";
+import type { VisualSource } from "../../generator/types/source";
 import { GeneratorCanvas } from "../GeneratorCanvas/GeneratorCanvas";
 import { ParametricPreview } from "../ParametricPreview/ParametricPreview";
 
 type PreviewMode = "original" | "parametric";
 
 type PreviewPanelProps = {
-	image: HTMLImageElement | null;
+	source: VisualSource | null;
 	config: GeneratorConfig;
 	animationRunId: number;
 };
@@ -26,29 +27,29 @@ const PREVIEW_MODES: Array<{
 ];
 
 export const PreviewPanel = ({
-	image,
+	source,
 	config,
 	animationRunId,
 }: PreviewPanelProps) => {
 	const [previewMode, setPreviewMode] = useState<PreviewMode>("parametric");
 
 	const renderPreview = () => {
-		if (!image) {
+		if (!source) {
 			return (
 				<div className="empty-preview">
-					<p>이미지를 선택하면 결과가 표시됩니다.</p>
+					<p>소스를 선택하면 결과가 표시됩니다.</p>
 				</div>
 			);
 		}
 
 		switch (previewMode) {
 			case "original":
-				return <GeneratorCanvas image={image} />;
+				return <GeneratorCanvas source={source} />;
 
 			case "parametric":
 				return (
 					<ParametricPreview
-						image={image}
+						source={source}
 						config={config}
 						animationRunId={animationRunId}
 					/>

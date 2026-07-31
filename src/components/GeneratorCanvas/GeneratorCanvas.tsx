@@ -1,11 +1,12 @@
 import { useEffect, useRef } from "react";
 import { calculateCanvasSize } from "../../generator/render/calculateCanvasSize";
+import { isVideoSource, type VisualSource } from "../../generator/types/source";
 
 type GeneratorCanvasProps = {
-	image: HTMLImageElement | null;
+	source: VisualSource;
 };
 
-export const GeneratorCanvas = ({ image }: GeneratorCanvasProps) => {
+export const GeneratorCanvas = ({ source }: GeneratorCanvasProps) => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 
 	useEffect(() => {
@@ -21,32 +22,32 @@ export const GeneratorCanvas = ({ image }: GeneratorCanvasProps) => {
 			return;
 		}
 
-		context.clearRect(0, 0, canvas.width, canvas.height);
-
-		if (!image) {
-			return;
-		}
-
-		const { width, height } = calculateCanvasSize(image);
+		const { width, height } = calculateCanvasSize(source);
 
 		canvas.width = width;
 		canvas.height = height;
 
-		context.drawImage(image, 0, 0, width, height);
-	}, [image]);
+		let animationFrameId = 0;
+
+		const renderFrame = () => {
+			context.clearRect(0, 0, width, height);
+			context.drawImage(source, 0, 0, width, height);
+
+			if (isVideoSource(source)) {
+				animationFrameId = requestAnimationFrame(renderFrame);
+			}
+		};
+
+		renderFrame();
+
+		return () => {
+			cancelAnimationFrame(animationFrameId);
+		};
+	}, [source]);
 
 	return (
 		<div className="canvas-container">
-			{!image && (
-				<p className="canvas-placeholder">
-					이미지를 선택하면 여기에 표시됩니다.
-				</p>
-			)}
-
-			<canvas
-				ref={canvasRef}
-				className={image ? "generator-canvas" : "generator-canvas is-empty"}
-			/>
+			<canvas ref={canvasRef} className="generator-canvas" />
 		</div>
 	);
 };

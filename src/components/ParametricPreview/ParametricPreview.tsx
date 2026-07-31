@@ -2,19 +2,20 @@ import { useEffect, useRef, useState } from "react";
 import { createAnimationFramesZip } from "../../generator/export/createAnimationFramesZip";
 import { renderParametricCanvas } from "../../generator/render/renderParametricCanvas";
 import type { GeneratorConfig } from "../../generator/types/generator";
+import { isVideoSource, type VisualSource } from "../../generator/types/source";
 import { useParametricAnimation } from "../../hooks/useParametricAnimation";
 import { canvasToBlob } from "../../utils/canvasToBlob";
 import { createExportFileName } from "../../utils/createExportFileName";
 import { downloadBlob } from "../../utils/downloadBlob";
 
 type ParametricPreviewProps = {
-	image: HTMLImageElement | null;
+	source: VisualSource | null;
 	config: GeneratorConfig;
 	animationRunId: number;
 };
 
 export const ParametricPreview = ({
-	image,
+	source,
 	config,
 	animationRunId,
 }: ParametricPreviewProps) => {
@@ -25,25 +26,39 @@ export const ParametricPreview = ({
 
 	const animationState = useParametricAnimation({
 		mode: config.animationMode,
-		restartKey: image,
+		restartKey: source,
 		animationRunId,
 	});
 
 	useEffect(() => {
 		const canvas = canvasRef.current;
 
-		if (!canvas || !image) {
+		if (!canvas || !source) {
 			return;
 		}
 
-		renderParametricCanvas({
-			canvas,
-			image,
-			config,
-			animationProgress: animationState.progress,
-			isAnimating: animationState.isAnimating,
-		});
-	}, [image, config, animationState]);
+		let animationFrameId = 0;
+
+		const renderFrame = () => {
+			renderParametricCanvas({
+				canvas,
+				image: source,
+				config,
+				animationProgress: animationState.progress,
+				isAnimating: animationState.isAnimating,
+			});
+
+			if (isVideoSource(source)) {
+				animationFrameId = requestAnimationFrame(renderFrame);
+			}
+		};
+
+		renderFrame();
+
+		return () => {
+			cancelAnimationFrame(animationFrameId);
+		};
+	}, [source, config, animationState.progress, animationState.isAnimating]);
 
 	const handleSavePng = async () => {
 		const canvas = canvasRef.current;
@@ -62,7 +77,7 @@ export const ParametricPreview = ({
 	};
 
 	const handleStartRecording = async () => {
-		if (!image || isRecording) {
+		if (!source || isRecording) {
 			return;
 		}
 
@@ -71,7 +86,7 @@ export const ParametricPreview = ({
 
 		try {
 			const zipBlob = await createAnimationFramesZip({
-				image,
+				image: source,
 				config,
 				onProgress: setRecordingProgress,
 			});
@@ -85,7 +100,7 @@ export const ParametricPreview = ({
 		}
 	};
 
-	if (!image) {
+	if (!source) {
 		return null;
 	}
 

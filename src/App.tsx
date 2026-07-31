@@ -7,10 +7,13 @@ import type {
 	AnimationMode,
 	GeneratorConfig,
 } from "./generator/types/generator";
+import type { SourceMode, VisualSource } from "./generator/types/source";
 import { useImageSource } from "./hooks/useImageSource";
+import { useWebcamSource } from "./hooks/useWebcamSource";
 
 function App() {
 	const [sourceFile, setSourceFile] = useState<File | null>(null);
+	const [sourceMode, setSourceMode] = useState<SourceMode>("image");
 
 	const [config, setConfig] = useState<GeneratorConfig>(
 		DEFAULT_GENERATOR_CONFIG,
@@ -18,7 +21,26 @@ function App() {
 
 	const [animationRunId, setAnimationRunId] = useState(0);
 
-	const { image, error, isLoading } = useImageSource(sourceFile);
+	const {
+		image,
+		error: imageError,
+		isLoading: isImageLoading,
+	} = useImageSource(sourceFile);
+
+	const {
+		video,
+		error: webcamError,
+		isLoading: isWebcamLoading,
+		isActive: isWebcamActive,
+		startWebcam,
+		stopWebcam,
+	} = useWebcamSource();
+
+	const source: VisualSource | null = sourceMode === "webcam" ? video : image;
+
+	const error = sourceMode === "webcam" ? webcamError : imageError;
+
+	const isLoading = sourceMode === "webcam" ? isWebcamLoading : isImageLoading;
 
 	const handleAnimationModeChange = useCallback(
 		(animationMode: AnimationMode) => {
@@ -32,6 +54,10 @@ function App() {
 		[],
 	);
 
+	const handleSourceModeChange = useCallback((nextSourceMode: SourceMode) => {
+		setSourceMode(nextSourceMode);
+	}, []);
+
 	return (
 		<main className="app">
 			<header className="app-header">
@@ -44,17 +70,23 @@ function App() {
 
 			<section className="workspace">
 				<ControlPanel
+					sourceMode={sourceMode}
 					sourceFile={sourceFile}
 					isLoading={isLoading}
 					error={error}
+					isWebcamLoading={isWebcamLoading}
+					isWebcamActive={isWebcamActive}
 					config={config}
+					onSourceModeChange={handleSourceModeChange}
+					onStartWebcam={startWebcam}
+					onStopWebcam={stopWebcam}
 					onFileChange={setSourceFile}
 					onConfigChange={setConfig}
 					onAnimationModeChange={handleAnimationModeChange}
 				/>
 
 				<PreviewPanel
-					image={image}
+					source={source}
 					config={config}
 					animationRunId={animationRunId}
 				/>
