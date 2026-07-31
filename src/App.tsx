@@ -32,19 +32,6 @@ function App() {
 		[],
 	);
 
-	const handleAnimationComplete = useCallback(() => {
-		/*
-		 * Animate가 끝난 뒤 실제 설정값을 Open으로 맞춘다.
-		 *
-		 * animationRunId는 증가시키지 않기 때문에
-		 * Open 애니메이션이 추가로 실행되지는 않는다.
-		 */
-		setConfig((currentConfig) => ({
-			...currentConfig,
-			animationMode: "open",
-		}));
-	}, []);
-
 	return (
 		<main className="app">
 			<header className="app-header">
@@ -70,7 +57,6 @@ function App() {
 					image={image}
 					config={config}
 					animationRunId={animationRunId}
-					onAnimationComplete={handleAnimationComplete}
 				/>
 			</section>
 		</main>

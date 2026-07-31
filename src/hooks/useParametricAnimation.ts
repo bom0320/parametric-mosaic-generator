@@ -13,7 +13,6 @@ type UseParametricAnimationOptions = {
 	mode: AnimationMode;
 	restartKey: unknown;
 	animationRunId: number;
-	onAnimationComplete: () => void;
 };
 
 const clamp = (value: number, minimum: number, maximum: number): number => {
@@ -36,7 +35,6 @@ export const useParametricAnimation = ({
 	mode,
 	restartKey,
 	animationRunId,
-	onAnimationComplete,
 }: UseParametricAnimationOptions): ParametricAnimationState => {
 	const [animationState, setAnimationState] =
 		useState<ParametricAnimationState>({
@@ -45,20 +43,15 @@ export const useParametricAnimation = ({
 		});
 
 	const modeRef = useRef(mode);
-	const onAnimationCompleteRef = useRef(onAnimationComplete);
 
 	useEffect(() => {
 		modeRef.current = mode;
 	}, [mode]);
 
 	useEffect(() => {
-		onAnimationCompleteRef.current = onAnimationComplete;
-	}, [onAnimationComplete]);
-
-	useEffect(() => {
 		/*
-		 * 두 값은 계산에 직접 사용하지 않지만,
-		 * 값이 바뀔 때마다 애니메이션 Effect를 다시 실행하기 위한 신호다.
+		 * 두 값은 계산에 직접 쓰이지 않지만,
+		 * 변경될 때마다 애니메이션을 새로 실행하는 신호다.
 		 */
 		void restartKey;
 		void animationRunId;
@@ -90,10 +83,8 @@ export const useParametricAnimation = ({
 
 				if (progress < 1) {
 					animationFrameId = requestAnimationFrame(animate);
-					return;
 				}
 
-				onAnimationCompleteRef.current();
 				return;
 			}
 

@@ -9,7 +9,6 @@ type PreviewPanelProps = {
 	image: HTMLImageElement | null;
 	config: GeneratorConfig;
 	animationRunId: number;
-	onAnimationComplete: () => void;
 };
 
 const PREVIEW_MODES: Array<{
@@ -30,7 +29,6 @@ export const PreviewPanel = ({
 	image,
 	config,
 	animationRunId,
-	onAnimationComplete,
 }: PreviewPanelProps) => {
 	const [previewMode, setPreviewMode] = useState<PreviewMode>("parametric");
 
@@ -53,7 +51,6 @@ export const PreviewPanel = ({
 						image={image}
 						config={config}
 						animationRunId={animationRunId}
-						onAnimationComplete={onAnimationComplete}
 					/>
 				);
 		}
