@@ -12,7 +12,7 @@ type RenderParametricCanvasOptions = {
 	animationProgress: number;
 };
 
-const CANVAS_BACKGROUND_COLOR = "#f5f1e8";
+const CANVAS_BACKGROUND_COLOR = "#ffffff";
 
 export const renderParametricCanvas = ({
 	canvas,

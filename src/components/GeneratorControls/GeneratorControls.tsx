@@ -71,8 +71,8 @@ export const GeneratorControls = ({
 			.addBinding(params, "gap", {
 				label: "Gap",
 				min: 0,
-				max: 10,
-				step: 1,
+				max: 2,
+				step: 0.25,
 			})
 			.on("change", emitConfigChange);
 
