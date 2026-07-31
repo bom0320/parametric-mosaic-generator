@@ -14,7 +14,7 @@ export const ParametricPreview = ({
 }: ParametricPreviewProps) => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 
-	const progress = useParametricAnimation(config.animationMode, image);
+	const animationProgress = useParametricAnimation(config.animationMode, image);
 
 	useEffect(() => {
 		const canvas = canvasRef.current;
@@ -27,9 +27,9 @@ export const ParametricPreview = ({
 			canvas,
 			image,
 			config,
-			progress,
+			animationProgress,
 		});
-	}, [image, config, progress]);
+	}, [image, config, animationProgress]);
 
 	if (!image) {
 		return null;

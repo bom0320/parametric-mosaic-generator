@@ -1,22 +1,27 @@
 import { useEffect, useState } from "react";
 import type { AnimationMode } from "../generator/types/generator";
 
-const ANIMATION_DURATION = 900;
+const ONE_WAY_DURATION = 900;
+const ANIMATION_CYCLE_DURATION = 5000;
+
+const clamp = (value: number, minimum: number, maximum: number): number => {
+	return Math.min(Math.max(value, minimum), maximum);
+};
 
 const easeInOutCubic = (progress: number): number => {
 	if (progress < 0.5) {
-		return 4 * progress * progress * progress;
+		return 4 * progress ** 3;
 	}
 
 	return 1 - (-2 * progress + 2) ** 3 / 2;
 };
 
 const getInitialProgress = (mode: AnimationMode): number => {
-	return mode === "open" ? 0 : 1;
-};
+	if (mode === "closed") {
+		return 1;
+	}
 
-const getAnimatedProgress = (mode: AnimationMode, progress: number): number => {
-	return mode === "open" ? progress : 1 - progress;
+	return 0;
 };
 
 export const useParametricAnimation = (
@@ -27,8 +32,8 @@ export const useParametricAnimation = (
 
 	useEffect(() => {
 		/*
-		 * restartKey 값 자체를 계산에 사용하지는 않지만,
-		 * 값이 변경되면 이 Effect를 다시 실행해 애니메이션을 재시작한다.
+		 * restartKey 값이 바뀌면 애니메이션을 처음부터 다시 실행한다.
+		 * 현재는 업로드한 image 객체가 restartKey로 전달된다.
 		 */
 		void restartKey;
 
@@ -43,10 +48,27 @@ export const useParametricAnimation = (
 			}
 
 			const elapsedTime = currentTime - startTime;
-			const linearProgress = Math.min(elapsedTime / ANIMATION_DURATION, 1);
+
+			if (mode === "animate") {
+				const cycleProgress =
+					(elapsedTime % ANIMATION_CYCLE_DURATION) / ANIMATION_CYCLE_DURATION;
+
+				setProgress(cycleProgress);
+
+				animationFrameId = requestAnimationFrame(animate);
+
+				return;
+			}
+
+			const linearProgress = clamp(elapsedTime / ONE_WAY_DURATION, 0, 1);
+
 			const easedProgress = easeInOutCubic(linearProgress);
 
-			setProgress(getAnimatedProgress(mode, easedProgress));
+			if (mode === "open") {
+				setProgress(easedProgress);
+			} else {
+				setProgress(1 - easedProgress);
+			}
 
 			if (linearProgress < 1) {
 				animationFrameId = requestAnimationFrame(animate);

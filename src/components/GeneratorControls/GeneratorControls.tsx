@@ -129,6 +129,7 @@ export const GeneratorControls = ({
 				options: {
 					Open: "open",
 					Close: "close",
+					Animate: "animate",
 				},
 			})
 			.on("change", emitConfigChange);

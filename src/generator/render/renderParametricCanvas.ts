@@ -1,3 +1,4 @@
+import { calculateAnimatedRowScale } from "../core/calculateAnimatedRowScale";
 import { findLuminanceStep } from "../core/findLuminanceStep";
 import { sampleImage } from "../core/sampleImage";
 import type { GeneratorConfig } from "../types/generator";
@@ -8,7 +9,7 @@ type RenderParametricCanvasOptions = {
 	canvas: HTMLCanvasElement;
 	image: HTMLImageElement;
 	config: GeneratorConfig;
-	progress: number;
+	animationProgress: number;
 };
 
 const CANVAS_BACKGROUND_COLOR = "#f5f1e8";
@@ -17,7 +18,7 @@ export const renderParametricCanvas = ({
 	canvas,
 	image,
 	config,
-	progress,
+	animationProgress,
 }: RenderParametricCanvasOptions): void => {
 	const context = canvas.getContext("2d");
 
@@ -25,7 +26,15 @@ export const renderParametricCanvas = ({
 		throw new Error("Failed to create a 2D canvas context.");
 	}
 
-	const { tilesX, tilesY, gap, direction, imageAdjustments, palette } = config;
+	const {
+		tilesX,
+		tilesY,
+		gap,
+		direction,
+		animationMode,
+		imageAdjustments,
+		palette,
+	} = config;
 
 	const { width: canvasWidth, height: canvasHeight } =
 		calculateCanvasSize(image);
@@ -39,6 +48,7 @@ export const renderParametricCanvas = ({
 	context.clearRect(0, 0, canvasWidth, canvasHeight);
 
 	context.fillStyle = CANVAS_BACKGROUND_COLOR;
+
 	context.fillRect(0, 0, canvasWidth, canvasHeight);
 
 	const cells = sampleImage(image, {
@@ -50,13 +60,23 @@ export const renderParametricCanvas = ({
 	for (const cell of cells) {
 		const step = findLuminanceStep(cell.luminance);
 
+		const animatedScale =
+			animationMode === "animate"
+				? calculateAnimatedRowScale({
+						baseScale: step.scale,
+						cycleProgress: animationProgress,
+						row: cell.row,
+						totalRows: tilesY,
+					})
+				: step.scale * animationProgress;
+
 		const bounds = calculateShapeBounds({
 			column: cell.column,
 			row: cell.row,
 			cellWidth,
 			cellHeight,
 			gap,
-			scale: step.scale * progress,
+			scale: animatedScale,
 			direction,
 		});
 
