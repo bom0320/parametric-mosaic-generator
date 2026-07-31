@@ -123,6 +123,16 @@ export const GeneratorControls = ({
 			})
 			.on("change", emitConfigChange);
 
+		blindsFolder
+			.addBinding(params, "animationMode", {
+				label: "Animation Mode",
+				options: {
+					Open: "open",
+					Close: "close",
+				},
+			})
+			.on("change", emitConfigChange);
+
 		const paletteFolder = pane.addFolder({
 			title: "Palette",
 			expanded: true,

@@ -5,6 +5,7 @@ export const DEFAULT_GENERATOR_CONFIG: GeneratorConfig = {
 	tilesY: 40,
 	gap: 2,
 	direction: "horizontal",
+	animationMode: "open",
 	imageAdjustments: {
 		brightness: 0,
 		contrast: 0,

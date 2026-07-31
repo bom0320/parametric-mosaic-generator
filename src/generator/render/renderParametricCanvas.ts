@@ -8,6 +8,7 @@ type RenderParametricCanvasOptions = {
 	canvas: HTMLCanvasElement;
 	image: HTMLImageElement;
 	config: GeneratorConfig;
+	progress: number;
 };
 
 const CANVAS_BACKGROUND_COLOR = "#f5f1e8";
@@ -16,6 +17,7 @@ export const renderParametricCanvas = ({
 	canvas,
 	image,
 	config,
+	progress,
 }: RenderParametricCanvasOptions): void => {
 	const context = canvas.getContext("2d");
 
@@ -54,7 +56,7 @@ export const renderParametricCanvas = ({
 			cellWidth,
 			cellHeight,
 			gap,
-			scale: step.scale,
+			scale: step.scale * progress,
 			direction,
 		});
 

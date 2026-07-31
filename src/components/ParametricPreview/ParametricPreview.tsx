@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { renderParametricCanvas } from "../../generator/render/renderParametricCanvas";
 import type { GeneratorConfig } from "../../generator/types/generator";
+import { useParametricAnimation } from "../../hooks/useParametricAnimation";
 
 type ParametricPreviewProps = {
 	image: HTMLImageElement | null;
@@ -13,6 +14,8 @@ export const ParametricPreview = ({
 }: ParametricPreviewProps) => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 
+	const progress = useParametricAnimation(config.animationMode, image);
+
 	useEffect(() => {
 		const canvas = canvasRef.current;
 
@@ -24,8 +27,9 @@ export const ParametricPreview = ({
 			canvas,
 			image,
 			config,
+			progress,
 		});
-	}, [image, config]);
+	}, [image, config, progress]);
 
 	if (!image) {
 		return null;
