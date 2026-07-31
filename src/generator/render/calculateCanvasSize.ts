@@ -1,3 +1,6 @@
+import { getSourceDimensions } from "../core/getSourceDimensions";
+import type { VisualSource } from "../types/source";
+
 type CanvasSize = {
 	width: number;
 	height: number;
@@ -6,12 +9,12 @@ type CanvasSize = {
 const MAX_CANVAS_WIDTH = 960;
 const MAX_CANVAS_HEIGHT = 720;
 
-export const calculateCanvasSize = (image: HTMLImageElement): CanvasSize => {
-	const sourceWidth = image.naturalWidth;
-	const sourceHeight = image.naturalHeight;
+export const calculateCanvasSize = (source: VisualSource): CanvasSize => {
+	const { width: sourceWidth, height: sourceHeight } =
+		getSourceDimensions(source);
 
 	if (sourceWidth <= 0 || sourceHeight <= 0) {
-		throw new Error("Image dimensions must be greater than zero.");
+		throw new Error("Source dimensions must be greater than zero.");
 	}
 
 	const scale = Math.min(

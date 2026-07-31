@@ -3,6 +3,7 @@ import type {
 	RGBColor,
 	SampledCell,
 } from "../types/generator";
+import type { VisualSource } from "../types/source";
 import { adjustColor } from "./adjustColor";
 import { blurImageData } from "./blurImageData";
 import { calculateLuminance } from "./calculateLuminance";
@@ -20,7 +21,7 @@ const DEFAULT_ADJUSTMENTS: ImageAdjustments = {
 };
 
 export const sampleImage = (
-	image: HTMLImageElement,
+	source: VisualSource,
 	options: SampleImageOptions,
 ): SampledCell[] => {
 	const { columns, rows, adjustments = DEFAULT_ADJUSTMENTS } = options;
@@ -45,7 +46,7 @@ export const sampleImage = (
 	context.imageSmoothingEnabled = true;
 	context.imageSmoothingQuality = "high";
 
-	context.drawImage(image, 0, 0, columns, rows);
+	context.drawImage(source, 0, 0, columns, rows);
 
 	const sourceImageData = context.getImageData(0, 0, columns, rows);
 
