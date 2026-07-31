@@ -10,20 +10,17 @@ export type LuminanceStep = {
 };
 
 export const LUMINANCE_STEPS = [
-	// 어두운 영역
-	{ min: 0, max: 27, paletteKey: "col1", scale: 1 },
-	{ min: 28, max: 55, paletteKey: "col1", scale: 1 },
-	{ min: 56, max: 84, paletteKey: "col1", scale: 0.85 },
+	// 어두운 영역: col1
+	{ min: 0, max: 39, paletteKey: "col1", scale: 1 },
+	{ min: 40, max: 79, paletteKey: "col1", scale: 0.85 },
 
-	// 중간 영역
-	{ min: 85, max: 112, paletteKey: "col2", scale: 1 },
-	{ min: 113, max: 141, paletteKey: "col2", scale: 1 },
-	{ min: 142, max: 169, paletteKey: "col2", scale: 0.82 },
+	// 중간 영역: col2
+	{ min: 80, max: 119, paletteKey: "col2", scale: 1 },
+	{ min: 120, max: 159, paletteKey: "col2", scale: 0.82 },
 
-	// 밝은 영역
-	{ min: 170, max: 198, paletteKey: "col3", scale: 0.5 },
-	{ min: 199, max: 226, paletteKey: "col3", scale: 0.3 },
+	// 밝은 영역: col3
+	{ min: 160, max: 199, paletteKey: "col3", scale: 0.45 },
 
-	// 가장 밝은 영역
-	{ min: 227, max: 255, paletteKey: "col4", scale: 1 },
+	// 가장 밝은 영역: col4
+	{ min: 200, max: 255, paletteKey: "col4", scale: 1 },
 ] satisfies LuminanceStep[];
