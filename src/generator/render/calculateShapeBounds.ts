@@ -23,6 +23,23 @@ const clampScale = (scale: number): number => {
 	return Math.min(Math.max(scale, 0), 1);
 };
 
+const calculateScaledSize = (
+	cellSize: number,
+	gap: number,
+	scale: number,
+): number => {
+	if (scale <= 0) {
+		return 0;
+	}
+
+	const availableSize = Math.max(cellSize - gap, 0);
+
+	return Math.min(
+		Math.max(availableSize * scale, MIN_VISIBLE_SIZE),
+		availableSize,
+	);
+};
+
 export const calculateShapeBounds = ({
 	column,
 	row,
@@ -37,41 +54,23 @@ export const calculateShapeBounds = ({
 	const cellX = column * cellWidth;
 	const cellY = row * cellHeight;
 
-	// gap을 scale 뒤에 빼지 말고, 먼저 "안쪽 셀 영역"을 만든다
-	const innerX = cellX + gap / 2;
-	const innerY = cellY + gap / 2;
-	const innerWidth = Math.max(cellWidth - gap, 0);
-	const innerHeight = Math.max(cellHeight - gap, 0);
-
-	if (direction === "vertical") {
-		const width =
-			safeScale === 0
-				? 0
-				: Math.min(
-						Math.max(innerWidth * safeScale, MIN_VISIBLE_SIZE),
-						innerWidth,
-					);
+	if (direction === "horizontal") {
+		const height = calculateScaledSize(cellHeight, gap, safeScale);
 
 		return {
-			x: innerX + (innerWidth - width) / 2,
-			y: innerY,
-			width,
-			height: innerHeight,
+			x: cellX,
+			y: cellY + (cellHeight - height) / 2,
+			width: cellWidth,
+			height,
 		};
 	}
 
-	const height =
-		safeScale === 0
-			? 0
-			: Math.min(
-					Math.max(innerHeight * safeScale, MIN_VISIBLE_SIZE),
-					innerHeight,
-				);
+	const width = calculateScaledSize(cellWidth, gap, safeScale);
 
 	return {
-		x: innerX,
-		y: innerY + (innerHeight - height) / 2,
-		width: innerWidth,
-		height,
+		x: cellX + (cellWidth - width) / 2,
+		y: cellY,
+		width,
+		height: cellHeight,
 	};
 };

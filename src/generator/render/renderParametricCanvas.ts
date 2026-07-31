@@ -15,6 +15,7 @@ type RenderParametricCanvasOptions = {
 };
 
 const CANVAS_BACKGROUND_COLOR = "#ffffff";
+const CELL_OVERLAP = 0.5;
 
 export const renderParametricCanvas = ({
 	canvas,
@@ -73,8 +74,28 @@ export const renderParametricCanvas = ({
 			direction,
 		});
 
+		if (bounds.width <= 0 || bounds.height <= 0) {
+			continue;
+		}
+
 		context.fillStyle = palette[step.paletteKey];
 
-		context.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
+		if (direction === "vertical") {
+			context.fillRect(
+				bounds.x,
+				bounds.y - CELL_OVERLAP / 2,
+				bounds.width,
+				bounds.height + CELL_OVERLAP,
+			);
+
+			continue;
+		}
+
+		context.fillRect(
+			bounds.x - CELL_OVERLAP / 2,
+			bounds.y,
+			bounds.width + CELL_OVERLAP,
+			bounds.height,
+		);
 	}
 };
