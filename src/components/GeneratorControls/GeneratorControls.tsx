@@ -5,15 +5,18 @@ import type { GeneratorConfig } from "../../generator/types/generator";
 type GeneratorControlsProps = {
 	config: GeneratorConfig;
 	onChange: (config: GeneratorConfig) => void;
+	onAnimate: () => void;
 };
 
 export const GeneratorControls = ({
 	config,
 	onChange,
+	onAnimate,
 }: GeneratorControlsProps) => {
 	const containerRef = useRef<HTMLDivElement>(null);
 	const configRef = useRef(config);
 	const onChangeRef = useRef(onChange);
+	const onAnimateRef = useRef(onAnimate);
 
 	useEffect(() => {
 		configRef.current = config;
@@ -22,6 +25,10 @@ export const GeneratorControls = ({
 	useEffect(() => {
 		onChangeRef.current = onChange;
 	}, [onChange]);
+
+	useEffect(() => {
+		onAnimateRef.current = onAnimate;
+	}, [onAnimate]);
 
 	useEffect(() => {
 		const container = containerRef.current;
@@ -128,11 +135,18 @@ export const GeneratorControls = ({
 				label: "Animation Mode",
 				options: {
 					Open: "open",
-					Close: "close",
-					Animate: "animate",
+					Closed: "closed",
 				},
 			})
 			.on("change", emitConfigChange);
+
+		blindsFolder
+			.addButton({
+				title: "Animate",
+			})
+			.on("click", () => {
+				onAnimateRef.current();
+			});
 
 		const paletteFolder = pane.addFolder({
 			title: "Palette",

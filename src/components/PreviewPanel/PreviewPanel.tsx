@@ -8,6 +8,7 @@ type PreviewMode = "original" | "parametric";
 type PreviewPanelProps = {
 	image: HTMLImageElement | null;
 	config: GeneratorConfig;
+	animationRunId: number;
 };
 
 const PREVIEW_MODES: Array<{
@@ -24,7 +25,11 @@ const PREVIEW_MODES: Array<{
 	},
 ];
 
-export const PreviewPanel = ({ image, config }: PreviewPanelProps) => {
+export const PreviewPanel = ({
+	image,
+	config,
+	animationRunId,
+}: PreviewPanelProps) => {
 	const [previewMode, setPreviewMode] = useState<PreviewMode>("parametric");
 
 	const renderPreview = () => {
@@ -41,7 +46,13 @@ export const PreviewPanel = ({ image, config }: PreviewPanelProps) => {
 				return <GeneratorCanvas image={image} />;
 
 			case "parametric":
-				return <ParametricPreview image={image} config={config} />;
+				return (
+					<ParametricPreview
+						image={image}
+						config={config}
+						animationRunId={animationRunId}
+					/>
+				);
 		}
 	};
 

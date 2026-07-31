@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import { ControlPanel } from "./components/ControlPanel/ControlPanel";
 import { PreviewPanel } from "./components/PreviewPanel/PreviewPanel";
@@ -8,11 +8,18 @@ import { useImageSource } from "./hooks/useImageSource";
 
 function App() {
 	const [sourceFile, setSourceFile] = useState<File | null>(null);
+
 	const [config, setConfig] = useState<GeneratorConfig>(
 		DEFAULT_GENERATOR_CONFIG,
 	);
 
+	const [animationRunId, setAnimationRunId] = useState(0);
+
 	const { image, error, isLoading } = useImageSource(sourceFile);
+
+	const handleAnimate = useCallback(() => {
+		setAnimationRunId((currentId) => currentId + 1);
+	}, []);
 
 	return (
 		<main className="app">
@@ -30,9 +37,14 @@ function App() {
 					config={config}
 					onFileChange={setSourceFile}
 					onConfigChange={setConfig}
+					onAnimate={handleAnimate}
 				/>
 
-				<PreviewPanel image={image} config={config} />
+				<PreviewPanel
+					image={image}
+					config={config}
+					animationRunId={animationRunId}
+				/>
 			</section>
 		</main>
 	);

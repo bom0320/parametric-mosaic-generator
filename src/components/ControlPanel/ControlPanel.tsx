@@ -9,6 +9,7 @@ type ControlPanelProps = {
 	config: GeneratorConfig;
 	onFileChange: (file: File | null) => void;
 	onConfigChange: (config: GeneratorConfig) => void;
+	onAnimate: () => void;
 };
 
 export const ControlPanel = ({
@@ -18,6 +19,7 @@ export const ControlPanel = ({
 	config,
 	onFileChange,
 	onConfigChange,
+	onAnimate,
 }: ControlPanelProps) => {
 	return (
 		<aside className="control-panel">
@@ -45,7 +47,11 @@ export const ControlPanel = ({
 
 			{error && <p className="error-message">{error}</p>}
 
-			<GeneratorControls config={config} onChange={onConfigChange} />
+			<GeneratorControls
+				config={config}
+				onChange={onConfigChange}
+				onAnimate={onAnimate}
+			/>
 		</aside>
 	);
 };

@@ -6,15 +6,21 @@ import { useParametricAnimation } from "../../hooks/useParametricAnimation";
 type ParametricPreviewProps = {
 	image: HTMLImageElement | null;
 	config: GeneratorConfig;
+	animationRunId: number;
 };
 
 export const ParametricPreview = ({
 	image,
 	config,
+	animationRunId,
 }: ParametricPreviewProps) => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 
-	const animationProgress = useParametricAnimation(config.animationMode, image);
+	const animationState = useParametricAnimation({
+		mode: config.animationMode,
+		restartKey: image,
+		animationRunId,
+	});
 
 	useEffect(() => {
 		const canvas = canvasRef.current;
@@ -27,9 +33,10 @@ export const ParametricPreview = ({
 			canvas,
 			image,
 			config,
-			animationProgress,
+			animationProgress: animationState.progress,
+			isAnimating: animationState.isAnimating,
 		});
-	}, [image, config, animationProgress]);
+	}, [image, config, animationState]);
 
 	if (!image) {
 		return null;

@@ -1,8 +1,19 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { AnimationMode } from "../generator/types/generator";
 
 const ONE_WAY_DURATION = 900;
-const ANIMATION_CYCLE_DURATION = 5000;
+const ANIMATE_DURATION = 5000;
+
+type ParametricAnimationState = {
+	progress: number;
+	isAnimating: boolean;
+};
+
+type UseParametricAnimationOptions = {
+	mode: AnimationMode;
+	restartKey: unknown;
+	animationRunId: number;
+};
 
 const clamp = (value: number, minimum: number, maximum: number): number => {
 	return Math.min(Math.max(value, minimum), maximum);
@@ -17,30 +28,45 @@ const easeInOutCubic = (progress: number): number => {
 };
 
 const getInitialProgress = (mode: AnimationMode): number => {
-	if (mode === "closed") {
-		return 1;
-	}
-
-	return 0;
+	return mode === "closed" ? 1 : 0;
 };
 
-export const useParametricAnimation = (
-	mode: AnimationMode,
-	restartKey: unknown,
-): number => {
-	const [progress, setProgress] = useState(() => getInitialProgress(mode));
+export const useParametricAnimation = ({
+	mode,
+	restartKey,
+	animationRunId,
+}: UseParametricAnimationOptions): ParametricAnimationState => {
+	const [animationState, setAnimationState] =
+		useState<ParametricAnimationState>({
+			progress: getInitialProgress(mode),
+			isAnimating: false,
+		});
+
+	const handledAnimationRunIdRef = useRef(animationRunId);
 
 	useEffect(() => {
-		/*
-		 * restartKey 값이 바뀌면 애니메이션을 처음부터 다시 실행한다.
-		 * 현재는 업로드한 image 객체가 restartKey로 전달된다.
-		 */
 		void restartKey;
+		void animationRunId;
 
 		let animationFrameId = 0;
 		let startTime: number | null = null;
 
-		setProgress(getInitialProgress(mode));
+		const shouldRunAnimate =
+			animationRunId !== handledAnimationRunIdRef.current;
+
+		if (shouldRunAnimate) {
+			handledAnimationRunIdRef.current = animationRunId;
+
+			setAnimationState({
+				progress: 0,
+				isAnimating: true,
+			});
+		} else {
+			setAnimationState({
+				progress: getInitialProgress(mode),
+				isAnimating: false,
+			});
+		}
 
 		const animate = (currentTime: number) => {
 			if (startTime === null) {
@@ -49,13 +75,17 @@ export const useParametricAnimation = (
 
 			const elapsedTime = currentTime - startTime;
 
-			if (mode === "animate") {
-				const cycleProgress =
-					(elapsedTime % ANIMATION_CYCLE_DURATION) / ANIMATION_CYCLE_DURATION;
+			if (shouldRunAnimate) {
+				const progress = clamp(elapsedTime / ANIMATE_DURATION, 0, 1);
 
-				setProgress(cycleProgress);
+				setAnimationState({
+					progress,
+					isAnimating: progress < 1,
+				});
 
-				animationFrameId = requestAnimationFrame(animate);
+				if (progress < 1) {
+					animationFrameId = requestAnimationFrame(animate);
+				}
 
 				return;
 			}
@@ -64,11 +94,12 @@ export const useParametricAnimation = (
 
 			const easedProgress = easeInOutCubic(linearProgress);
 
-			if (mode === "open") {
-				setProgress(easedProgress);
-			} else {
-				setProgress(1 - easedProgress);
-			}
+			const progress = mode === "open" ? easedProgress : 1 - easedProgress;
+
+			setAnimationState({
+				progress,
+				isAnimating: false,
+			});
 
 			if (linearProgress < 1) {
 				animationFrameId = requestAnimationFrame(animate);
@@ -80,7 +111,7 @@ export const useParametricAnimation = (
 		return () => {
 			cancelAnimationFrame(animationFrameId);
 		};
-	}, [mode, restartKey]);
+	}, [mode, restartKey, animationRunId]);
 
-	return progress;
+	return animationState;
 };
