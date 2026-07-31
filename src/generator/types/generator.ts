@@ -7,7 +7,7 @@ export type RGBColor = {
 
 export type BlindDirection = "horizontal" | "vertical";
 
-export type AnimationMode = "open" | "closed";
+export type AnimationMode = "open" | "closed" | "animate";
 
 export type ImageAdjustments = {
 	brightness: number;

@@ -14,11 +14,16 @@ function App() {
 	);
 
 	const [animationRunId, setAnimationRunId] = useState(0);
+	const [animationCompletedId, setAnimationCompletedId] = useState(0);
 
 	const { image, error, isLoading } = useImageSource(sourceFile);
 
 	const handleAnimate = useCallback(() => {
 		setAnimationRunId((currentId) => currentId + 1);
+	}, []);
+
+	const handleAnimationComplete = useCallback(() => {
+		setAnimationCompletedId((currentId) => currentId + 1);
 	}, []);
 
 	return (
@@ -38,12 +43,14 @@ function App() {
 					onFileChange={setSourceFile}
 					onConfigChange={setConfig}
 					onAnimate={handleAnimate}
+					animationCompletedId={animationCompletedId}
 				/>
 
 				<PreviewPanel
 					image={image}
 					config={config}
 					animationRunId={animationRunId}
+					onAnimationComplete={handleAnimationComplete}
 				/>
 			</section>
 		</main>

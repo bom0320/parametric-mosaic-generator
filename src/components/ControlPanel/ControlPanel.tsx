@@ -10,6 +10,7 @@ type ControlPanelProps = {
 	onFileChange: (file: File | null) => void;
 	onConfigChange: (config: GeneratorConfig) => void;
 	onAnimate: () => void;
+	animationCompletedId: number;
 };
 
 export const ControlPanel = ({
@@ -20,6 +21,7 @@ export const ControlPanel = ({
 	onFileChange,
 	onConfigChange,
 	onAnimate,
+	animationCompletedId,
 }: ControlPanelProps) => {
 	return (
 		<aside className="control-panel">
@@ -51,6 +53,7 @@ export const ControlPanel = ({
 				config={config}
 				onChange={onConfigChange}
 				onAnimate={onAnimate}
+				animationCompletedId={animationCompletedId}
 			/>
 		</aside>
 	);

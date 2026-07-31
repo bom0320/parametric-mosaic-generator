@@ -13,6 +13,7 @@ type UseParametricAnimationOptions = {
 	mode: AnimationMode;
 	restartKey: unknown;
 	animationRunId: number;
+	onAnimationComplete: () => void;
 };
 
 const clamp = (value: number, minimum: number, maximum: number): number => {
@@ -35,6 +36,7 @@ export const useParametricAnimation = ({
 	mode,
 	restartKey,
 	animationRunId,
+	onAnimationComplete,
 }: UseParametricAnimationOptions): ParametricAnimationState => {
 	const [animationState, setAnimationState] =
 		useState<ParametricAnimationState>({
@@ -43,10 +45,14 @@ export const useParametricAnimation = ({
 		});
 
 	const handledAnimationRunIdRef = useRef(animationRunId);
+	const onAnimationCompleteRef = useRef(onAnimationComplete);
+
+	useEffect(() => {
+		onAnimationCompleteRef.current = onAnimationComplete;
+	}, [onAnimationComplete]);
 
 	useEffect(() => {
 		void restartKey;
-		void animationRunId;
 
 		let animationFrameId = 0;
 		let startTime: number | null = null;
@@ -85,8 +91,10 @@ export const useParametricAnimation = ({
 
 				if (progress < 1) {
 					animationFrameId = requestAnimationFrame(animate);
+					return;
 				}
 
+				onAnimationCompleteRef.current();
 				return;
 			}
 

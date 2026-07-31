@@ -7,12 +7,14 @@ type ParametricPreviewProps = {
 	image: HTMLImageElement | null;
 	config: GeneratorConfig;
 	animationRunId: number;
+	onAnimationComplete: () => void;
 };
 
 export const ParametricPreview = ({
 	image,
 	config,
 	animationRunId,
+	onAnimationComplete,
 }: ParametricPreviewProps) => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -20,6 +22,7 @@ export const ParametricPreview = ({
 		mode: config.animationMode,
 		restartKey: image,
 		animationRunId,
+		onAnimationComplete,
 	});
 
 	useEffect(() => {

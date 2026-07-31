@@ -6,17 +6,23 @@ type GeneratorControlsProps = {
 	config: GeneratorConfig;
 	onChange: (config: GeneratorConfig) => void;
 	onAnimate: () => void;
+	animationCompletedId: number;
 };
 
 export const GeneratorControls = ({
 	config,
 	onChange,
 	onAnimate,
+	animationCompletedId,
 }: GeneratorControlsProps) => {
 	const containerRef = useRef<HTMLDivElement>(null);
 	const configRef = useRef(config);
 	const onChangeRef = useRef(onChange);
 	const onAnimateRef = useRef(onAnimate);
+
+	const paramsRef = useRef<GeneratorConfig | null>(null);
+	const paneRef = useRef<Pane | null>(null);
+	const previousCompletedIdRef = useRef(animationCompletedId);
 
 	useEffect(() => {
 		configRef.current = config;
@@ -29,6 +35,28 @@ export const GeneratorControls = ({
 	useEffect(() => {
 		onAnimateRef.current = onAnimate;
 	}, [onAnimate]);
+
+	useEffect(() => {
+		if (animationCompletedId === previousCompletedIdRef.current) {
+			return;
+		}
+
+		previousCompletedIdRef.current = animationCompletedId;
+
+		const params = paramsRef.current;
+		const pane = paneRef.current;
+
+		if (!params || !pane) {
+			return;
+		}
+
+		/*
+		 * 애니메이션이 끝난 뒤 드롭다운 표시만 Open으로 바꾼다.
+		 * onChange를 호출하지 않으므로 Open 애니메이션은 실행되지 않는다.
+		 */
+		params.animationMode = "open";
+		pane.refresh();
+	}, [animationCompletedId]);
 
 	useEffect(() => {
 		const container = containerRef.current;
@@ -44,11 +72,27 @@ export const GeneratorControls = ({
 			title: "Generator",
 		});
 
+		paramsRef.current = params;
+		paneRef.current = pane;
+
 		const emitConfigChange = () => {
 			const nextConfig = structuredClone(params);
 
 			configRef.current = nextConfig;
 			onChangeRef.current(nextConfig);
+		};
+
+		const handleAnimationModeChange = () => {
+			if (params.animationMode === "animate") {
+				/*
+				 * Animate 표시를 유지한 상태로
+				 * 일회성 애니메이션을 시작한다.
+				 */
+				onAnimateRef.current();
+				return;
+			}
+
+			emitConfigChange();
 		};
 
 		const gridFolder = pane.addFolder({
@@ -136,17 +180,10 @@ export const GeneratorControls = ({
 				options: {
 					Open: "open",
 					Closed: "closed",
+					Animate: "animate",
 				},
 			})
-			.on("change", emitConfigChange);
-
-		blindsFolder
-			.addButton({
-				title: "Animate",
-			})
-			.on("click", () => {
-				onAnimateRef.current();
-			});
+			.on("change", handleAnimationModeChange);
 
 		const paletteFolder = pane.addFolder({
 			title: "Palette",
@@ -179,6 +216,9 @@ export const GeneratorControls = ({
 
 		return () => {
 			pane.dispose();
+
+			paramsRef.current = null;
+			paneRef.current = null;
 		};
 	}, []);
 
