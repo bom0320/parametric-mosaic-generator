@@ -5,7 +5,10 @@ type CalculateAnimatedRowScaleOptions = {
 	totalRows: number;
 };
 
-const clamp = (value: number, minimum: number, maximum: number): number => {
+const TRANSITION_BAND_ROWS = 6;
+const MIN_VISIBLE_SCALE = 0.08;
+
+const clamp = (value: number, minimum = 0, maximum = 1): number => {
 	return Math.min(Math.max(value, minimum), maximum);
 };
 
@@ -21,75 +24,50 @@ const easeInOutCubic = (progress: number): number => {
 	return 1 - (-2 * progress + 2) ** 3 / 2;
 };
 
-const calculateRowProgress = (
-	sweepProgress: number,
-	row: number,
-	totalRows: number,
-): number => {
-	const lastRowIndex = Math.max(totalRows - 1, 1);
-	const rowPosition = row / lastRowIndex;
-
-	/*
-	 * 각 행이 순차적으로 시작되도록 지연을 준다.
-	 *
-	 * rowPosition이 작을수록 위쪽 행이므로 먼저 움직이고,
-	 * rowPosition이 클수록 아래쪽 행이므로 나중에 움직인다.
-	 */
-	const rowStart = rowPosition * 0.75;
-
-	const localProgress = clamp((sweepProgress - rowStart) / 0.25, 0, 1);
-
-	return easeInOutCubic(localProgress);
-};
-
 export const calculateAnimatedRowScale = ({
 	baseScale,
 	cycleProgress,
 	row,
 	totalRows,
 }: CalculateAnimatedRowScaleOptions): number => {
+	const safeBaseScale = clamp(baseScale);
+	const safeProgress = clamp(cycleProgress);
+
+	if (totalRows <= 0) {
+		return safeBaseScale;
+	}
+
+	const transitionBand = Math.max(1, Math.min(TRANSITION_BAND_ROWS, totalRows));
+
+	const sweepHead = safeProgress * (totalRows - 1 + transitionBand);
+
+	const sweepTail = sweepHead - transitionBand;
+
+	const minimumScale = Math.min(MIN_VISIBLE_SCALE, safeBaseScale);
+
 	/*
-	 * 전체 5초 사이클:
-	 *
-	 * 0.00 ~ 0.10
-	 * 열린 상태 유지
-	 *
-	 * 0.10 ~ 0.40
-	 * 위에서 아래로 닫힘
-	 *
-	 * 0.40 ~ 0.60
-	 * 닫힌 상태 유지
-	 *
-	 * 0.60 ~ 0.90
-	 * 위에서 아래로 다시 열림
-	 *
-	 * 0.90 ~ 1.00
-	 * 열린 상태 유지
+	 * 블라인드가 이미 지나간 위쪽 행:
+	 * 얇은 선 상태
 	 */
-
-	if (cycleProgress < 0.1) {
-		return baseScale;
+	if (row <= sweepTail) {
+		return minimumScale;
 	}
 
-	if (cycleProgress < 0.4) {
-		const sweepProgress = (cycleProgress - 0.1) / 0.3;
-
-		const rowProgress = calculateRowProgress(sweepProgress, row, totalRows);
-
-		return lerp(baseScale, 0, rowProgress);
+	/*
+	 * 블라인드가 아직 도착하지 않은 아래쪽 행:
+	 * 원래 두께 유지
+	 */
+	if (row >= sweepHead) {
+		return safeBaseScale;
 	}
 
-	if (cycleProgress < 0.6) {
-		return 0;
-	}
+	/*
+	 * 블라인드 경계 안에 있는 행:
+	 * 원래 두께에서 얇은 선으로 변환
+	 */
+	const transitionProgress = clamp((sweepHead - row) / transitionBand);
 
-	if (cycleProgress < 0.9) {
-		const sweepProgress = (cycleProgress - 0.6) / 0.3;
+	const easedProgress = easeInOutCubic(transitionProgress);
 
-		const rowProgress = calculateRowProgress(sweepProgress, row, totalRows);
-
-		return lerp(0, baseScale, rowProgress);
-	}
-
-	return baseScale;
+	return lerp(safeBaseScale, minimumScale, easedProgress);
 };
