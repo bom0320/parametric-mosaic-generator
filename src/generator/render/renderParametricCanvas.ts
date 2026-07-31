@@ -1,4 +1,4 @@
-import { calculateAnimatedRowScale } from "../core/calculateAnimatedRowScale";
+import { calculateAnimatedSweepScale } from "./../core/calculateAnimatedRowScale";
 import { findLuminanceStep } from "../core/findLuminanceStep";
 import { sampleImage } from "../core/sampleImage";
 import type { GeneratorConfig } from "../types/generator";
@@ -55,12 +55,16 @@ export const renderParametricCanvas = ({
 	for (const cell of cells) {
 		const step = findLuminanceStep(cell.luminance);
 
+		const sweepIndex = direction === "horizontal" ? cell.row : cell.column;
+
+		const sweepItemCount = direction === "horizontal" ? tilesY : tilesX;
+
 		const animatedScale = isAnimating
-			? calculateAnimatedRowScale({
+			? calculateAnimatedSweepScale({
 					baseScale: step.scale,
 					cycleProgress: animationProgress,
-					row: cell.row,
-					totalRows: tilesY,
+					itemIndex: sweepIndex,
+					totalItems: sweepItemCount,
 				})
 			: step.scale * animationProgress;
 
