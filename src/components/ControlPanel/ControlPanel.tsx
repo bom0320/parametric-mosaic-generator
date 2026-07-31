@@ -1,4 +1,7 @@
-import type { GeneratorConfig } from "../../generator/types/generator";
+import type {
+	AnimationMode,
+	GeneratorConfig,
+} from "../../generator/types/generator";
 import { FileUploader } from "../FileUploader/FileUploader";
 import { GeneratorControls } from "../GeneratorControls/GeneratorControls";
 
@@ -9,8 +12,7 @@ type ControlPanelProps = {
 	config: GeneratorConfig;
 	onFileChange: (file: File | null) => void;
 	onConfigChange: (config: GeneratorConfig) => void;
-	onAnimate: () => void;
-	completedAnimationRunId: number;
+	onAnimationModeChange: (animationMode: AnimationMode) => void;
 };
 
 export const ControlPanel = ({
@@ -20,8 +22,7 @@ export const ControlPanel = ({
 	config,
 	onFileChange,
 	onConfigChange,
-	onAnimate,
-	completedAnimationRunId,
+	onAnimationModeChange,
 }: ControlPanelProps) => {
 	return (
 		<aside className="control-panel">
@@ -52,8 +53,7 @@ export const ControlPanel = ({
 			<GeneratorControls
 				config={config}
 				onChange={onConfigChange}
-				onAnimate={onAnimate}
-				completedAnimationRunId={completedAnimationRunId}
+				onAnimationModeChange={onAnimationModeChange}
 			/>
 		</aside>
 	);

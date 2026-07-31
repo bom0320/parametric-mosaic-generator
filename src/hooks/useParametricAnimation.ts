@@ -44,35 +44,34 @@ export const useParametricAnimation = ({
 			isAnimating: false,
 		});
 
-	const handledAnimationRunIdRef = useRef(animationRunId);
+	const modeRef = useRef(mode);
 	const onAnimationCompleteRef = useRef(onAnimationComplete);
+
+	useEffect(() => {
+		modeRef.current = mode;
+	}, [mode]);
 
 	useEffect(() => {
 		onAnimationCompleteRef.current = onAnimationComplete;
 	}, [onAnimationComplete]);
 
 	useEffect(() => {
+		/*
+		 * 두 값은 계산에 직접 사용하지 않지만,
+		 * 값이 바뀔 때마다 애니메이션 Effect를 다시 실행하기 위한 신호다.
+		 */
 		void restartKey;
+		void animationRunId;
+
+		const activeMode = modeRef.current;
 
 		let animationFrameId = 0;
 		let startTime: number | null = null;
 
-		const shouldRunAnimate =
-			animationRunId !== handledAnimationRunIdRef.current;
-
-		if (shouldRunAnimate) {
-			handledAnimationRunIdRef.current = animationRunId;
-
-			setAnimationState({
-				progress: 0,
-				isAnimating: true,
-			});
-		} else {
-			setAnimationState({
-				progress: getInitialProgress(mode),
-				isAnimating: false,
-			});
-		}
+		setAnimationState({
+			progress: getInitialProgress(activeMode),
+			isAnimating: activeMode === "animate",
+		});
 
 		const animate = (currentTime: number) => {
 			if (startTime === null) {
@@ -81,7 +80,7 @@ export const useParametricAnimation = ({
 
 			const elapsedTime = currentTime - startTime;
 
-			if (shouldRunAnimate) {
+			if (activeMode === "animate") {
 				const progress = clamp(elapsedTime / ANIMATE_DURATION, 0, 1);
 
 				setAnimationState({
@@ -102,7 +101,8 @@ export const useParametricAnimation = ({
 
 			const easedProgress = easeInOutCubic(linearProgress);
 
-			const progress = mode === "open" ? easedProgress : 1 - easedProgress;
+			const progress =
+				activeMode === "open" ? easedProgress : 1 - easedProgress;
 
 			setAnimationState({
 				progress,
@@ -119,7 +119,7 @@ export const useParametricAnimation = ({
 		return () => {
 			cancelAnimationFrame(animationFrameId);
 		};
-	}, [mode, restartKey, animationRunId]);
+	}, [restartKey, animationRunId]);
 
 	return animationState;
 };

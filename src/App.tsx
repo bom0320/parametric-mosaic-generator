@@ -3,7 +3,10 @@ import { useCallback, useState } from "react";
 import { ControlPanel } from "./components/ControlPanel/ControlPanel";
 import { PreviewPanel } from "./components/PreviewPanel/PreviewPanel";
 import { DEFAULT_GENERATOR_CONFIG } from "./generator/config/defaultGeneratorConfig";
-import type { GeneratorConfig } from "./generator/types/generator";
+import type {
+	AnimationMode,
+	GeneratorConfig,
+} from "./generator/types/generator";
 import { useImageSource } from "./hooks/useImageSource";
 
 function App() {
@@ -14,16 +17,32 @@ function App() {
 	);
 
 	const [animationRunId, setAnimationRunId] = useState(0);
-	const [completedAnimationRunId, setCompletedAnimationRunId] = useState(0);
 
 	const { image, error, isLoading } = useImageSource(sourceFile);
 
-	const handleAnimate = useCallback(() => {
-		setAnimationRunId((currentRunId) => currentRunId + 1);
-	}, []);
+	const handleAnimationModeChange = useCallback(
+		(animationMode: AnimationMode) => {
+			setConfig((currentConfig) => ({
+				...currentConfig,
+				animationMode,
+			}));
+
+			setAnimationRunId((currentRunId) => currentRunId + 1);
+		},
+		[],
+	);
 
 	const handleAnimationComplete = useCallback(() => {
-		setCompletedAnimationRunId((currentRunId) => currentRunId + 1);
+		/*
+		 * Animate가 끝난 뒤 실제 설정값을 Open으로 맞춘다.
+		 *
+		 * animationRunId는 증가시키지 않기 때문에
+		 * Open 애니메이션이 추가로 실행되지는 않는다.
+		 */
+		setConfig((currentConfig) => ({
+			...currentConfig,
+			animationMode: "open",
+		}));
 	}, []);
 
 	return (
@@ -44,8 +63,7 @@ function App() {
 					config={config}
 					onFileChange={setSourceFile}
 					onConfigChange={setConfig}
-					onAnimate={handleAnimate}
-					completedAnimationRunId={completedAnimationRunId}
+					onAnimationModeChange={handleAnimationModeChange}
 				/>
 
 				<PreviewPanel

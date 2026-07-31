@@ -1,52 +1,32 @@
 import { useEffect, useRef } from "react";
 import { Pane } from "tweakpane";
-import type { GeneratorConfig } from "../../generator/types/generator";
+import type {
+	AnimationMode,
+	GeneratorConfig,
+} from "../../generator/types/generator";
 
 type GeneratorControlsProps = {
 	config: GeneratorConfig;
 	onChange: (config: GeneratorConfig) => void;
-	onAnimate: () => void;
-	completedAnimationRunId: number;
+	onAnimationModeChange: (animationMode: AnimationMode) => void;
 };
 
 export const GeneratorControls = ({
 	config,
 	onChange,
-	onAnimate,
-	completedAnimationRunId,
+	onAnimationModeChange,
 }: GeneratorControlsProps) => {
 	const containerRef = useRef<HTMLDivElement>(null);
 
 	const configRef = useRef(config);
 	const onChangeRef = useRef(onChange);
-	const onAnimateRef = useRef(onAnimate);
+	const onAnimationModeChangeRef = useRef(onAnimationModeChange);
 
 	const paramsRef = useRef<GeneratorConfig | null>(null);
 	const paneRef = useRef<Pane | null>(null);
 
-	const previousCompletedRunIdRef = useRef(completedAnimationRunId);
-
 	useEffect(() => {
 		configRef.current = config;
-	}, [config]);
-
-	useEffect(() => {
-		onChangeRef.current = onChange;
-	}, [onChange]);
-
-	useEffect(() => {
-		onAnimateRef.current = onAnimate;
-	}, [onAnimate]);
-
-	useEffect(() => {
-		const isNewCompletion =
-			completedAnimationRunId !== previousCompletedRunIdRef.current;
-
-		if (!isNewCompletion) {
-			return;
-		}
-
-		previousCompletedRunIdRef.current = completedAnimationRunId;
 
 		const params = paramsRef.current;
 		const pane = paneRef.current;
@@ -56,12 +36,23 @@ export const GeneratorControls = ({
 		}
 
 		/*
-		 * Animate 재생이 끝난 뒤 드롭다운 표시만 Open으로 변경한다.
-		 * onChange를 호출하지 않으므로 Open 애니메이션은 실행되지 않는다.
+		 * Animate 완료 후 App에서 animationMode를 Open으로 바꾸면
+		 * Tweakpane 드롭다운 표시도 Open으로 맞춘다.
 		 */
-		params.animationMode = "open";
-		pane.refresh();
-	}, [completedAnimationRunId]);
+		if (params.animationMode !== config.animationMode) {
+			params.animationMode = config.animationMode;
+
+			pane.refresh();
+		}
+	}, [config]);
+
+	useEffect(() => {
+		onChangeRef.current = onChange;
+	}, [onChange]);
+
+	useEffect(() => {
+		onAnimationModeChangeRef.current = onAnimationModeChange;
+	}, [onAnimationModeChange]);
 
 	useEffect(() => {
 		const container = containerRef.current;
@@ -88,16 +79,7 @@ export const GeneratorControls = ({
 		};
 
 		const handleAnimationModeChange = () => {
-			if (params.animationMode === "animate") {
-				/*
-				 * Animate를 config에 저장하지 않고
-				 * 별도의 실행 신호만 발생시킨다.
-				 */
-				onAnimateRef.current();
-				return;
-			}
-
-			emitConfigChange();
+			onAnimationModeChangeRef.current(params.animationMode);
 		};
 
 		const gridFolder = pane.addFolder({
