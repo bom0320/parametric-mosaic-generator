@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { type RefObject, useEffect, useRef, useState } from "react";
 
 import { renderParametricCanvas } from "../../generator/render/renderParametricCanvas";
 import type { GeneratorConfig } from "../../generator/types/generator";
@@ -9,6 +9,7 @@ type ParametricPreviewProps = {
 	source: VisualSource | null;
 	config: GeneratorConfig;
 	animationRunId: number;
+	canvasRef: RefObject<HTMLCanvasElement | null>;
 };
 
 type ViewportSize = {
@@ -20,9 +21,9 @@ export const ParametricPreview = ({
 	source,
 	config,
 	animationRunId,
+	canvasRef,
 }: ParametricPreviewProps) => {
 	const containerRef = useRef<HTMLDivElement>(null);
-	const canvasRef = useRef<HTMLCanvasElement>(null);
 
 	const [viewportSize, setViewportSize] = useState<ViewportSize>({
 		width: 0,
@@ -102,6 +103,7 @@ export const ParametricPreview = ({
 		animationState.isAnimating,
 		viewportSize.width,
 		viewportSize.height,
+		canvasRef,
 	]);
 
 	if (!source) {
