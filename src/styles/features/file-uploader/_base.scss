@@ -1,14 +1,16 @@
 .file-uploader {
   position: relative;
 
-  display: grid;
+  display: flex;
+  width: 100%;
+  min-height: 32px;
 
-  min-height: 34px;
+  align-items: center;
+  justify-content: center;
+
   padding: 0 10px;
 
-  place-items: center;
-
-  border: 1px solid #32363c;
+  border: 1px solid #34383f;
   border-radius: 3px;
 
   background: #1d2025;
@@ -22,7 +24,7 @@
     color 120ms ease;
 
   &:hover {
-    border-color: #454a52;
+    border-color: #4a4f57;
     background: #272b31;
     color: #fff;
   }

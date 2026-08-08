@@ -1,21 +1,21 @@
 .source-selector {
-  margin-bottom: 18px;
+  width: 100%;
+  margin: 0;
 }
 
 .source-action-buttons {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  display: flex;
+  width: 100%;
+  flex-direction: column;
   gap: 6px;
 
   button {
-    display: grid;
+    width: 100%;
+    min-height: 32px;
 
-    min-height: 34px;
     padding: 0 10px;
 
-    place-items: center;
-
-    border: 1px solid #32363c;
+    border: 1px solid #34383f;
     border-radius: 3px;
 
     background: #1d2025;
@@ -30,7 +30,7 @@
       color 120ms ease;
 
     &:hover:not(:disabled) {
-      border-color: #454a52;
+      border-color: #4a4f57;
       background: #272b31;
       color: #fff;
     }
