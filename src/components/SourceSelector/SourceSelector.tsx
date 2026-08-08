@@ -1,4 +1,5 @@
 import type { SourceMode } from "../../generator/types/source";
+import { FileUploader } from "../FileUploader/FileUploader";
 
 type SourceSelectorProps = {
 	sourceMode: SourceMode;
@@ -7,6 +8,7 @@ type SourceSelectorProps = {
 	onSourceModeChange: (sourceMode: SourceMode) => void;
 	onStartWebcam: () => void;
 	onStopWebcam: () => void;
+	onFileChange: (file: File | null) => void;
 };
 
 export const SourceSelector = ({
@@ -16,50 +18,48 @@ export const SourceSelector = ({
 	onSourceModeChange,
 	onStartWebcam,
 	onStopWebcam,
+	onFileChange,
 }: SourceSelectorProps) => {
-	const handleImageModeClick = () => {
+	const handleImageChange = (file: File | null) => {
+		if (!file) {
+			return;
+		}
+
 		onStopWebcam();
 		onSourceModeChange("image");
+		onFileChange(file);
 	};
 
-	const handleWebcamModeClick = () => {
-		onSourceModeChange("webcam");
-
-		if (!isWebcamActive) {
-			onStartWebcam();
+	const handleWebcamClick = () => {
+		if (isWebcamActive) {
+			onStopWebcam();
+			return;
 		}
+
+		onSourceModeChange("webcam");
+		onStartWebcam();
 	};
 
 	return (
 		<section className="source-selector">
-			<div className="source-mode-buttons">
-				<button
-					type="button"
-					className={sourceMode === "image" ? "is-active" : undefined}
-					onClick={handleImageModeClick}
-				>
-					Image
-				</button>
+			<div className="source-action-buttons">
+				<FileUploader onFileChange={handleImageChange} />
 
 				<button
 					type="button"
-					className={sourceMode === "webcam" ? "is-active" : undefined}
-					onClick={handleWebcamModeClick}
+					className={
+						sourceMode === "webcam" && isWebcamActive ? "is-active" : undefined
+					}
+					onClick={handleWebcamClick}
 					disabled={isWebcamLoading}
 				>
-					{isWebcamLoading ? "Starting..." : "Webcam"}
+					{isWebcamLoading
+						? "Starting..."
+						: isWebcamActive
+							? "Stop Webcam"
+							: "Webcam"}
 				</button>
 			</div>
-
-			{sourceMode === "webcam" && isWebcamActive && (
-				<button
-					type="button"
-					className="stop-webcam-button"
-					onClick={onStopWebcam}
-				>
-					Stop Webcam
-				</button>
-			)}
 		</section>
 	);
 };

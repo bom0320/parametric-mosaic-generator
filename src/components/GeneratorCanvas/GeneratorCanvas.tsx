@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-import { calculateCanvasSize } from "../../generator/render/calculateCanvasSize";
+import { getSourceDimensions } from "../../generator/core/getSourceDimensions";
 import { isVideoSource, type VisualSource } from "../../generator/types/source";
 
 type GeneratorCanvasProps = {
@@ -59,20 +59,36 @@ export const GeneratorCanvas = ({ source }: GeneratorCanvasProps) => {
 			return;
 		}
 
-		const { width, height } = calculateCanvasSize({
-			source,
-			viewportWidth: viewportSize.width,
-			viewportHeight: viewportSize.height,
-		});
+		const canvasWidth = Math.round(viewportSize.width);
+		const canvasHeight = Math.round(viewportSize.height);
 
-		canvas.width = width;
-		canvas.height = height;
+		canvas.width = canvasWidth;
+		canvas.height = canvasHeight;
+
+		const { width: sourceWidth, height: sourceHeight } =
+			getSourceDimensions(source);
+
+		if (sourceWidth <= 0 || sourceHeight <= 0) {
+			return;
+		}
+
+		const scale = Math.max(
+			canvasWidth / sourceWidth,
+			canvasHeight / sourceHeight,
+		);
+
+		const drawWidth = sourceWidth * scale;
+		const drawHeight = sourceHeight * scale;
+
+		const drawX = (canvasWidth - drawWidth) / 2;
+		const drawY = (canvasHeight - drawHeight) / 2;
 
 		let animationFrameId = 0;
 
 		const renderFrame = () => {
-			context.clearRect(0, 0, width, height);
-			context.drawImage(source, 0, 0, width, height);
+			context.clearRect(0, 0, canvasWidth, canvasHeight);
+
+			context.drawImage(source, drawX, drawY, drawWidth, drawHeight);
 
 			if (isVideoSource(source)) {
 				animationFrameId = requestAnimationFrame(renderFrame);

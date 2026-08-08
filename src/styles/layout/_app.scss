@@ -2,15 +2,16 @@
   position: relative;
 
   display: grid;
-  grid-template-columns: 240px minmax(0, 1fr) 320px;
+  grid-template-columns: 280px minmax(0, 1fr) 360px;
+  grid-template-rows: minmax(0, 1fr);
 
   width: 100vw;
   height: 100dvh;
 
   overflow: hidden;
 
-  background: #0b0b0c;
-  color: #f2f2f2;
+  background: #08090a;
+  color: #e8e8e8;
 }
 
 .app.controls-hidden {
@@ -23,29 +24,35 @@
 
   overflow: hidden;
 
-  background: #0b0b0c;
+  background: #08090a;
 }
 
 .controls-toggle {
   position: fixed;
-  z-index: 50;
-  top: 12px;
-  left: 12px;
+  z-index: 100;
+
+  top: 10px;
+  left: 10px;
+
+  width: auto;
+  height: auto;
 
   padding: 4px 7px;
 
-  border: 1px solid #343434;
+  border: 1px solid #34373c;
   border-radius: 3px;
 
-  background: #171719;
-  color: #ddd;
+  background: #191b1f;
+  color: #c9c9c9;
 
   font: inherit;
   font-size: 10px;
+  line-height: 1.2;
 
   cursor: pointer;
 
   &:hover {
-    background: #222225;
+    background: #24272c;
+    color: #fff;
   }
 }

@@ -1,5 +1,4 @@
 import type { SourceMode, VisualSource } from "../../generator/types/source";
-import { FileUploader } from "../FileUploader/FileUploader";
 import { GeneratorCanvas } from "../GeneratorCanvas/GeneratorCanvas";
 import { SourceSelector } from "../SourceSelector/SourceSelector";
 
@@ -52,9 +51,8 @@ export const SourcePanel = ({
 					onSourceModeChange={onSourceModeChange}
 					onStartWebcam={onStartWebcam}
 					onStopWebcam={onStopWebcam}
+					onFileChange={onFileChange}
 				/>
-
-				{sourceMode === "image" && <FileUploader onFileChange={onFileChange} />}
 
 				{sourceFile && (
 					<dl className="source-information">
