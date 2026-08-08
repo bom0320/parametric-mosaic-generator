@@ -1,4 +1,5 @@
 import JSZip from "jszip";
+
 import { canvasToBlob } from "../../utils/canvasToBlob";
 import { renderParametricCanvas } from "../render/renderParametricCanvas";
 import type { GeneratorConfig } from "../types/generator";
@@ -43,6 +44,8 @@ export const createAnimationFramesZip = async ({
 			config,
 			animationProgress,
 			isAnimating: true,
+			viewportWidth: window.innerWidth,
+			viewportHeight: window.innerHeight,
 		});
 
 		const frameBlob = await canvasToBlob(canvas);

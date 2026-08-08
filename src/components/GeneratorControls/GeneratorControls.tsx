@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { Pane } from "tweakpane";
+
 import type {
 	AnimationMode,
 	GeneratorConfig,
@@ -35,10 +36,6 @@ export const GeneratorControls = ({
 			return;
 		}
 
-		/*
-		 * Animate 완료 후 App에서 animationMode를 Open으로 바꾸면
-		 * Tweakpane 드롭다운 표시도 Open으로 맞춘다.
-		 */
 		if (params.animationMode !== config.animationMode) {
 			params.animationMode = config.animationMode;
 
@@ -65,7 +62,6 @@ export const GeneratorControls = ({
 
 		const pane = new Pane({
 			container,
-			title: "Generator",
 		});
 
 		paramsRef.current = params;

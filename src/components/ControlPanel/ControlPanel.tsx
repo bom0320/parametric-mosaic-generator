@@ -3,9 +3,9 @@ import type {
 	GeneratorConfig,
 } from "../../generator/types/generator";
 import type { SourceMode } from "../../generator/types/source";
-import { SourceSelector } from "../\bSourceSelector/SourceSelector";
 import { FileUploader } from "../FileUploader/FileUploader";
 import { GeneratorControls } from "../GeneratorControls/GeneratorControls";
+import { SourceSelector } from "../SourceSelector/SourceSelector";
 
 type ControlPanelProps = {
 	sourceMode: SourceMode;
@@ -40,44 +40,52 @@ export const ControlPanel = ({
 }: ControlPanelProps) => {
 	return (
 		<aside className="control-panel">
-			<h2>Source</h2>
+			<header className="control-panel-header">
+				<h1>Controls</h1>
+			</header>
 
-			<SourceSelector
-				sourceMode={sourceMode}
-				isWebcamLoading={isWebcamLoading}
-				isWebcamActive={isWebcamActive}
-				onSourceModeChange={onSourceModeChange}
-				onStartWebcam={onStartWebcam}
-				onStopWebcam={onStopWebcam}
-			/>
+			<section className="control-section">
+				<h2>Source</h2>
 
-			{sourceMode === "image" && (
-				<>
-					<FileUploader onFileChange={onFileChange} />
+				<SourceSelector
+					sourceMode={sourceMode}
+					isWebcamLoading={isWebcamLoading}
+					isWebcamActive={isWebcamActive}
+					onSourceModeChange={onSourceModeChange}
+					onStartWebcam={onStartWebcam}
+					onStopWebcam={onStopWebcam}
+				/>
 
-					{sourceFile && (
-						<dl className="file-information">
-							<div>
-								<dt>파일명</dt>
-								<dd>{sourceFile.name}</dd>
-							</div>
+				{sourceMode === "image" && (
+					<>
+						<FileUploader onFileChange={onFileChange} />
 
-							<div>
-								<dt>파일 형식</dt>
-								<dd>{sourceFile.type || "알 수 없음"}</dd>
-							</div>
-						</dl>
-					)}
-				</>
-			)}
+						{sourceFile && (
+							<dl className="file-information">
+								<div>
+									<dt>파일명</dt>
+									<dd>{sourceFile.name}</dd>
+								</div>
 
-			{sourceMode === "webcam" && isWebcamActive && (
-				<p className="status-message">웹캠이 연결되었습니다.</p>
-			)}
+								<div>
+									<dt>파일 형식</dt>
+									<dd>{sourceFile.type || "알 수 없음"}</dd>
+								</div>
+							</dl>
+						)}
+					</>
+				)}
 
-			{isLoading && <p className="status-message">소스를 불러오는 중입니다.</p>}
+				{sourceMode === "webcam" && isWebcamActive && (
+					<p className="status-message">웹캠이 연결되었습니다.</p>
+				)}
 
-			{error && <p className="error-message">{error}</p>}
+				{isLoading && (
+					<p className="status-message">소스를 불러오는 중입니다.</p>
+				)}
+
+				{error && <p className="error-message">{error}</p>}
+			</section>
 
 			<GeneratorControls
 				config={config}

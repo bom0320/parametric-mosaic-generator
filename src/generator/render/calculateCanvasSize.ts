@@ -6,10 +6,17 @@ type CanvasSize = {
 	height: number;
 };
 
-const MAX_CANVAS_WIDTH = 960;
-const MAX_CANVAS_HEIGHT = 720;
+type CalculateCanvasSizeOptions = {
+	source: VisualSource;
+	viewportWidth: number;
+	viewportHeight: number;
+};
 
-export const calculateCanvasSize = (source: VisualSource): CanvasSize => {
+export const calculateCanvasSize = ({
+	source,
+	viewportWidth,
+	viewportHeight,
+}: CalculateCanvasSizeOptions): CanvasSize => {
 	const { width: sourceWidth, height: sourceHeight } =
 		getSourceDimensions(source);
 
@@ -17,14 +24,12 @@ export const calculateCanvasSize = (source: VisualSource): CanvasSize => {
 		throw new Error("Source dimensions must be greater than zero.");
 	}
 
-	const scale = Math.min(
-		MAX_CANVAS_WIDTH / sourceWidth,
-		MAX_CANVAS_HEIGHT / sourceHeight,
-		1,
-	);
+	if (viewportWidth <= 0 || viewportHeight <= 0) {
+		throw new Error("Viewport dimensions must be greater than zero.");
+	}
 
 	return {
-		width: Math.round(sourceWidth * scale),
-		height: Math.round(sourceHeight * scale),
+		width: Math.round(viewportWidth),
+		height: Math.round(viewportHeight),
 	};
 };

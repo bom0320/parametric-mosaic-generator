@@ -14,6 +14,7 @@ import { useWebcamSource } from "./hooks/useWebcamSource";
 function App() {
 	const [sourceFile, setSourceFile] = useState<File | null>(null);
 	const [sourceMode, setSourceMode] = useState<SourceMode>("image");
+	const [isControlsVisible, setIsControlsVisible] = useState(true);
 
 	const [config, setConfig] = useState<GeneratorConfig>(
 		DEFAULT_GENERATOR_CONFIG,
@@ -58,39 +59,47 @@ function App() {
 		setSourceMode(nextSourceMode);
 	}, []);
 
+	const handleToggleControls = useCallback(() => {
+		setIsControlsVisible((current) => !current);
+	}, []);
+
 	return (
 		<main className="app">
-			<header className="app-header">
-				<p className="eyebrow">Core Experiment 01</p>
-
-				<h1>Parametric Mosaic Generator</h1>
-
-				<p>이미지를 분석하고 명암에 따라 도형의 크기를 변환합니다.</p>
-			</header>
-
-			<section className="workspace">
-				<ControlPanel
-					sourceMode={sourceMode}
-					sourceFile={sourceFile}
-					isLoading={isLoading}
-					error={error}
-					isWebcamLoading={isWebcamLoading}
-					isWebcamActive={isWebcamActive}
-					config={config}
-					onSourceModeChange={handleSourceModeChange}
-					onStartWebcam={startWebcam}
-					onStopWebcam={stopWebcam}
-					onFileChange={setSourceFile}
-					onConfigChange={setConfig}
-					onAnimationModeChange={handleAnimationModeChange}
-				/>
-
+			<section className="generator-stage">
 				<PreviewPanel
 					source={source}
 					config={config}
 					animationRunId={animationRunId}
 				/>
 			</section>
+
+			<div className="controls-overlay">
+				<button
+					type="button"
+					className="controls-toggle"
+					onClick={handleToggleControls}
+				>
+					{isControlsVisible ? "Hide Controls" : "Show Controls"}
+				</button>
+
+				{isControlsVisible && (
+					<ControlPanel
+						sourceMode={sourceMode}
+						sourceFile={sourceFile}
+						isLoading={isLoading}
+						error={error}
+						isWebcamLoading={isWebcamLoading}
+						isWebcamActive={isWebcamActive}
+						config={config}
+						onSourceModeChange={handleSourceModeChange}
+						onStartWebcam={startWebcam}
+						onStopWebcam={stopWebcam}
+						onFileChange={setSourceFile}
+						onConfigChange={setConfig}
+						onAnimationModeChange={handleAnimationModeChange}
+					/>
+				)}
+			</div>
 		</main>
 	);
 }

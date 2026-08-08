@@ -12,6 +12,8 @@ type RenderParametricCanvasOptions = {
 	config: GeneratorConfig;
 	animationProgress: number;
 	isAnimating: boolean;
+	viewportWidth: number;
+	viewportHeight: number;
 };
 
 const CANVAS_BACKGROUND_COLOR = "#ffffff";
@@ -23,6 +25,8 @@ export const renderParametricCanvas = ({
 	config,
 	animationProgress,
 	isAnimating,
+	viewportWidth,
+	viewportHeight,
 }: RenderParametricCanvasOptions): void => {
 	const context = canvas.getContext("2d");
 
@@ -32,8 +36,11 @@ export const renderParametricCanvas = ({
 
 	const { tilesX, tilesY, gap, direction, imageAdjustments, palette } = config;
 
-	const { width: canvasWidth, height: canvasHeight } =
-		calculateCanvasSize(image);
+	const { width: canvasWidth, height: canvasHeight } = calculateCanvasSize({
+		source: image,
+		viewportWidth,
+		viewportHeight,
+	});
 
 	const cellWidth = canvasWidth / tilesX;
 	const cellHeight = canvasHeight / tilesY;

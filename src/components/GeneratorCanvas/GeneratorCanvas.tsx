@@ -1,4 +1,5 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+
 import { calculateCanvasSize } from "../../generator/render/calculateCanvasSize";
 import { isVideoSource, type VisualSource } from "../../generator/types/source";
 
@@ -6,13 +7,49 @@ type GeneratorCanvasProps = {
 	source: VisualSource;
 };
 
+type ViewportSize = {
+	width: number;
+	height: number;
+};
+
 export const GeneratorCanvas = ({ source }: GeneratorCanvasProps) => {
+	const containerRef = useRef<HTMLDivElement>(null);
 	const canvasRef = useRef<HTMLCanvasElement>(null);
+
+	const [viewportSize, setViewportSize] = useState<ViewportSize>({
+		width: 0,
+		height: 0,
+	});
+
+	useEffect(() => {
+		const container = containerRef.current;
+
+		if (!container) {
+			return;
+		}
+
+		const updateSize = () => {
+			setViewportSize({
+				width: container.clientWidth,
+				height: container.clientHeight,
+			});
+		};
+
+		updateSize();
+
+		const resizeObserver = new ResizeObserver(updateSize);
+
+		resizeObserver.observe(container);
+
+		return () => {
+			resizeObserver.disconnect();
+		};
+	}, []);
 
 	useEffect(() => {
 		const canvas = canvasRef.current;
 
-		if (!canvas) {
+		if (!canvas || viewportSize.width <= 0 || viewportSize.height <= 0) {
 			return;
 		}
 
@@ -22,7 +59,11 @@ export const GeneratorCanvas = ({ source }: GeneratorCanvasProps) => {
 			return;
 		}
 
-		const { width, height } = calculateCanvasSize(source);
+		const { width, height } = calculateCanvasSize({
+			source,
+			viewportWidth: viewportSize.width,
+			viewportHeight: viewportSize.height,
+		});
 
 		canvas.width = width;
 		canvas.height = height;
@@ -43,10 +84,10 @@ export const GeneratorCanvas = ({ source }: GeneratorCanvasProps) => {
 		return () => {
 			cancelAnimationFrame(animationFrameId);
 		};
-	}, [source]);
+	}, [source, viewportSize.width, viewportSize.height]);
 
 	return (
-		<div className="canvas-container">
+		<div ref={containerRef} className="canvas-container">
 			<canvas ref={canvasRef} className="generator-canvas" />
 		</div>
 	);
