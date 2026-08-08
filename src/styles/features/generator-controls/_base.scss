@@ -1,10 +1,38 @@
 .generator-controls {
+  --tp-base-background-color: #15181d;
+  --tp-base-shadow-color: transparent;
+
+  --tp-button-background-color: #252930;
+  --tp-button-background-color-active: #343942;
+  --tp-button-background-color-focus: #2d323a;
+  --tp-button-background-color-hover: #2d323a;
+  --tp-button-foreground-color: #e5e7eb;
+
+  --tp-container-background-color: #1c2026;
+  --tp-container-background-color-active: #272c33;
+  --tp-container-background-color-focus: #23282f;
+  --tp-container-background-color-hover: #23282f;
+  --tp-container-foreground-color: #c9cdd3;
+
+  --tp-groove-foreground-color: #7d838d;
+
+  --tp-input-background-color: #23272d;
+  --tp-input-background-color-active: #343941;
+  --tp-input-background-color-focus: #30353d;
+  --tp-input-background-color-hover: #2b3037;
+  --tp-input-foreground-color: #e7e9ec;
+
+  --tp-label-foreground-color: #9ca2ab;
+
+  --tp-monitor-background-color: #111317;
+  --tp-monitor-foreground-color: #aeb4bc;
+
   --tp-blade-unit-size: 32px;
   --tp-blade-value-width: 140px;
   --tp-blade-label-width: 100px;
 
   width: 100%;
-  margin-top: 16px;
+  margin-top: 12px;
 
   &:empty {
     display: none;
@@ -12,5 +40,15 @@
 
   > div {
     width: 100%;
+  }
+
+  .tp-sldv_k::after {
+    background-color: #e7e9ec;
+  }
+
+  .tp-sldv_t:hover .tp-sldv_k::after,
+  .tp-sldv_t:focus .tp-sldv_k::after,
+  .tp-sldv_t:active .tp-sldv_k::after {
+    background-color: #e7e9ec;
   }
 }
