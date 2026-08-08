@@ -12,6 +12,8 @@ type CalculateCanvasSizeOptions = {
 	viewportHeight: number;
 };
 
+const PREVIEW_OCCUPANCY = 0.82;
+
 export const calculateCanvasSize = ({
 	source,
 	viewportWidth,
@@ -28,8 +30,13 @@ export const calculateCanvasSize = ({
 		throw new Error("Viewport dimensions must be greater than zero.");
 	}
 
+	const maxWidth = viewportWidth * PREVIEW_OCCUPANCY;
+	const maxHeight = viewportHeight * PREVIEW_OCCUPANCY;
+
+	const scale = Math.min(maxWidth / sourceWidth, maxHeight / sourceHeight);
+
 	return {
-		width: Math.round(viewportWidth),
-		height: Math.round(viewportHeight),
+		width: Math.max(Math.round(sourceWidth * scale), 1),
+		height: Math.max(Math.round(sourceHeight * scale), 1),
 	};
 };

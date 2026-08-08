@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { type CSSProperties, useCallback, useState } from "react";
 
 import { ControlPanel } from "./components/ControlPanel/ControlPanel";
 import { PreviewPanel } from "./components/PreviewPanel/PreviewPanel";
@@ -9,6 +9,7 @@ import type {
 } from "./generator/types/generator";
 import type { SourceMode, VisualSource } from "./generator/types/source";
 import { useImageSource } from "./hooks/useImageSource";
+import { useSourceBackgroundColor } from "./hooks/useSourceBackgroundColor";
 import { useWebcamSource } from "./hooks/useWebcamSource";
 
 function App() {
@@ -39,6 +40,12 @@ function App() {
 
 	const source: VisualSource | null = sourceMode === "webcam" ? video : image;
 
+	const backgroundColor = useSourceBackgroundColor(source);
+
+	const appStyle = {
+		"--generator-background": backgroundColor,
+	} as CSSProperties;
+
 	const error = sourceMode === "webcam" ? webcamError : imageError;
 
 	const isLoading = sourceMode === "webcam" ? isWebcamLoading : isImageLoading;
@@ -64,7 +71,10 @@ function App() {
 	}, []);
 
 	return (
-		<main className="app">
+		<main
+			className={`app${isControlsVisible ? " has-controls" : ""}`}
+			style={appStyle}
+		>
 			<section className="generator-stage">
 				<PreviewPanel
 					source={source}

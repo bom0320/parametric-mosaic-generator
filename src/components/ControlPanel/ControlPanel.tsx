@@ -40,10 +40,6 @@ export const ControlPanel = ({
 }: ControlPanelProps) => {
 	return (
 		<aside className="control-panel">
-			<header className="control-panel-header">
-				<h1>Controls</h1>
-			</header>
-
 			<section className="control-section">
 				<h2>Source</h2>
 
