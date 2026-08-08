@@ -1,7 +1,8 @@
-import { type CSSProperties, useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 
 import { ControlPanel } from "./components/ControlPanel/ControlPanel";
 import { PreviewPanel } from "./components/PreviewPanel/PreviewPanel";
+import { SourcePanel } from "./components/SourcePanel/SourcePanel";
 import { DEFAULT_GENERATOR_CONFIG } from "./generator/config/defaultGeneratorConfig";
 import type {
 	AnimationMode,
@@ -9,7 +10,6 @@ import type {
 } from "./generator/types/generator";
 import type { SourceMode, VisualSource } from "./generator/types/source";
 import { useImageSource } from "./hooks/useImageSource";
-import { useSourceBackgroundColor } from "./hooks/useSourceBackgroundColor";
 import { useWebcamSource } from "./hooks/useWebcamSource";
 
 function App() {
@@ -40,12 +40,6 @@ function App() {
 
 	const source: VisualSource | null = sourceMode === "webcam" ? video : image;
 
-	const backgroundColor = useSourceBackgroundColor(source);
-
-	const appStyle = {
-		"--generator-background": backgroundColor,
-	} as CSSProperties;
-
 	const error = sourceMode === "webcam" ? webcamError : imageError;
 
 	const isLoading = sourceMode === "webcam" ? isWebcamLoading : isImageLoading;
@@ -71,10 +65,23 @@ function App() {
 	}, []);
 
 	return (
-		<main
-			className={`app${isControlsVisible ? " has-controls" : ""}`}
-			style={appStyle}
-		>
+		<main className={`app${isControlsVisible ? "" : " controls-hidden"}`}>
+			{isControlsVisible && (
+				<SourcePanel
+					source={source}
+					sourceMode={sourceMode}
+					sourceFile={sourceFile}
+					isLoading={isLoading}
+					error={error}
+					isWebcamLoading={isWebcamLoading}
+					isWebcamActive={isWebcamActive}
+					onSourceModeChange={handleSourceModeChange}
+					onStartWebcam={startWebcam}
+					onStopWebcam={stopWebcam}
+					onFileChange={setSourceFile}
+				/>
+			)}
+
 			<section className="generator-stage">
 				<PreviewPanel
 					source={source}
@@ -83,33 +90,21 @@ function App() {
 				/>
 			</section>
 
-			<div className="controls-overlay">
-				<button
-					type="button"
-					className="controls-toggle"
-					onClick={handleToggleControls}
-				>
-					{isControlsVisible ? "Hide Controls" : "Show Controls"}
-				</button>
+			{isControlsVisible && (
+				<ControlPanel
+					config={config}
+					onConfigChange={setConfig}
+					onAnimationModeChange={handleAnimationModeChange}
+				/>
+			)}
 
-				{isControlsVisible && (
-					<ControlPanel
-						sourceMode={sourceMode}
-						sourceFile={sourceFile}
-						isLoading={isLoading}
-						error={error}
-						isWebcamLoading={isWebcamLoading}
-						isWebcamActive={isWebcamActive}
-						config={config}
-						onSourceModeChange={handleSourceModeChange}
-						onStartWebcam={startWebcam}
-						onStopWebcam={stopWebcam}
-						onFileChange={setSourceFile}
-						onConfigChange={setConfig}
-						onAnimationModeChange={handleAnimationModeChange}
-					/>
-				)}
-			</div>
+			<button
+				type="button"
+				className="controls-toggle"
+				onClick={handleToggleControls}
+			>
+				{isControlsVisible ? "Hide Controls" : "Show Controls"}
+			</button>
 		</main>
 	);
 }

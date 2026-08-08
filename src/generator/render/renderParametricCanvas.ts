@@ -16,7 +16,6 @@ type RenderParametricCanvasOptions = {
 	viewportHeight: number;
 };
 
-const CANVAS_BACKGROUND_COLOR = "#ffffff";
 const CELL_OVERLAP = 0.5;
 
 export const renderParametricCanvas = ({
@@ -49,9 +48,6 @@ export const renderParametricCanvas = ({
 	canvas.height = canvasHeight;
 
 	context.clearRect(0, 0, canvasWidth, canvasHeight);
-
-	context.fillStyle = CANVAS_BACKGROUND_COLOR;
-	context.fillRect(0, 0, canvasWidth, canvasHeight);
 
 	const cells = sampleImage(image, {
 		columns: tilesX,
